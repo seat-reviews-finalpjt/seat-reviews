@@ -3,9 +3,9 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     GENDER_CHOICES = [
-        ("male", "남성"),
-        ('female', '여성'),
-        ("other", "또 다른 성"),
+        ("남성", "male"),
+        ('여성', 'female'),
+        ("또 다른 성", "other"),
     ]
     nickname=models.CharField(max_length=20, unique = True)
     name=models.CharField(max_length=10)

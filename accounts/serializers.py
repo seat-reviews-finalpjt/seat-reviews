@@ -4,7 +4,7 @@ from .models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["username", "password", "email", "name"]
+        fields = ["username", "password", "email", "name", "nickname", "gender", "birthday"]
         extra_kwargs = {
             "password": {"write_only": True}
         }  # 비밀번호 필드를 읽기 전용으로 설정
