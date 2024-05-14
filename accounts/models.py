@@ -9,7 +9,7 @@ class User(AbstractUser):
     }
     nickname=models.CharField(max_length=20, unique = True)
     name=models.CharField(max_length=10)
-    gender=models.CharField(choices=GENDER_CHOICES, blank=True)
+    gender=models.CharField(max_length=10, choices=GENDER_CHOICES, blank=True)
     birthday=models.DateField(auto_now=False, auto_now_add=False, blank=True)
     
     
