@@ -3,6 +3,7 @@ from .models import Article
 from .serializers import ArticleSerializer
 
 
+#게시글 작성 및 목록 조회
 class ArticleList(generics.ListCreateAPIView):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
@@ -16,3 +17,10 @@ class ArticleList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+# 게시글 수정
+class ArticleDetail(generics.RetrieveUpdateAPIView):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
+    permission_classes = [permissions.AllowAny] # permissions.IsAuthenticated 테스트 해보려고 아무나 가능하도록 해놨음
