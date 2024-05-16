@@ -7,7 +7,7 @@ from rest_framework import status
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["username", "password", "email", "name", "nickname", "gender", "birthday"]
+        fields = ["username", "password", "email", "name", "nickname", "gender", "birthday", "profile_image"]
         extra_kwargs = {
             "password": {"write_only": True}
         }  # 비밀번호 필드를 읽기 전용으로 설정

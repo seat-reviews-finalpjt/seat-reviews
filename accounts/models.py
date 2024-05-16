@@ -11,6 +11,7 @@ class User(AbstractUser):
     name=models.CharField(max_length=10)
     gender=models.CharField(max_length=10, choices=GENDER_CHOICES, blank=True, null=True)
     birthday=models.DateField(null=True, blank=True)
+    profile_image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
     
     
     def __str__(self):
