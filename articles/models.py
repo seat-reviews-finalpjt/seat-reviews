@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from rest_framework import permissions
 
+
 class Article(models.Model):
     title = models.CharField(max_length=255)
     photo = models.ImageField(upload_to='photos/')
@@ -22,6 +23,7 @@ class ArticlesLike(models.Model):
     class Meta:
         unique_together = ('user', 'article')
 
+
 class Comment(models.Model):
     content = models.CharField(max_length=100)
     article = models.ForeignKey(
@@ -36,3 +38,11 @@ class Comment(models.Model):
     def __str__(self):
         return self.content
 
+
+class CommentLike(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+    liked_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'comment')

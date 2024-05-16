@@ -1,7 +1,7 @@
 
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
-from .models import Article, ArticlesLike, Comment
+from .models import Article, ArticlesLike, Comment, CommentLike
 from .serializers import ArticleSerializer, CommentSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404
@@ -57,6 +57,7 @@ class ArticleLikeUnlike(generics.UpdateAPIView, generics.DestroyAPIView):
         return Response({"detail": "게시글 안좋아요 완료!"}, status=status.HTTP_204_NO_CONTENT)
 
 
+# 댓글 작성 및 목록 조회
 class CommentListAPIView(APIView):
     def get(self, request, pk):
         comments = Comment.objects.filter(article=pk)
@@ -85,6 +86,7 @@ class CommentListAPIView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# 댓글 수정 및 삭제
 class CommentDetailAPIView(APIView):
 
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -114,3 +116,35 @@ class CommentDetailAPIView(APIView):
         self.check_object_permissions(request, comment)
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+# 댓글 좋아요 기능
+
+
+class CommentLikeUnlikeAPIView(APIView):
+    def post(self, request, article_pk, comment_pk):
+        try:
+            comment = Comment.objects.get(pk=comment_pk)
+        except Comment.DoesNotExist:
+            return Response({"error": "댓글이 존재하지 않습니다."})
+
+        user = request.user
+
+        if CommentLike.objects.filter(user=user, comment=comment).exists():
+            return Response({"error": "이미 좋아요 되어있는 게시물입니다."})
+
+        like = CommentLike(user=user, comment=comment)
+        like.save()
+
+        return Response({"message": "좋아요 완료!"})
+
+    def delete(self, request, article_pk, comment_pk):
+        try:
+            comment = Comment.objects.get(pk=comment_pk)
+        except Comment.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        user = request.user
+
+        like = get_object_or_404(CommentLike, user=user, comment=comment)
+        like.delete()
+        return Response({"detail": "댓글 안좋아요 완료!"}, status=status.HTTP_204_NO_CONTENT)
