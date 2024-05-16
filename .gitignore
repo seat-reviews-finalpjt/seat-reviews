@@ -1,5 +1,6 @@
 venv
 /media/
+/photos/
 DRF_SpartarNews/config.py
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,django,database
