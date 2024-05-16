@@ -13,11 +13,25 @@ class CommentListAPIView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
+        parent_comment_id = request.data.get('parent_comment_id')
         serializer = CommentSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        if parent_comment_id:  # 대댓글인 경우
+            try:
+                parent_comment = Comment.objects.get(pk=parent_comment_id)
+            except Comment.DoesNotExist:
+                return Response({"error": "상위 댓글이 존재하지 않습니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+            if serializer.is_valid():
+                serializer.save(parent_comment=parent_comment)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        else:  # 일반 댓글인 경우
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CommentDetailAPIView(APIView):
