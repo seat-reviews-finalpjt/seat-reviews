@@ -18,7 +18,7 @@ class UserJoinView(APIView):
 class TokenBlacklistView(OriginalTokenBlacklistView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
-        if response.status_code == status.HTTP_205_RESET_CONTENT:
+        if response.status_code == status.HTTP_200_OK:
             return Response({"message": "리플래쉬 토큰이 블랙리스트에 추가되었습니다."}, status=status.HTTP_205_RESET_CONTENT)
         return response
 
@@ -35,3 +35,4 @@ def delete_user(request, username):
         return Response({'message': '회원 탈퇴가 완료되었습니다.'}, status=status.HTTP_204_NO_CONTENT)
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    

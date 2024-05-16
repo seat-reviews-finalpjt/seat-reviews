@@ -23,3 +23,4 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'password': '잘못된 패스워드입니다.'})
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
