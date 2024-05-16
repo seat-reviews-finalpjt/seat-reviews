@@ -1,11 +1,12 @@
 from rest_framework import status
 from rest_framework.views import APIView
+from django.contrib.auth.hashers import check_password
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from .serializers import UserSerializer
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenBlacklistView as OriginalTokenBlacklistView
-
+from rest_framework.permissions import AllowAny
 
 class UserJoinView(APIView):
     def post(self, request):
@@ -14,6 +15,22 @@ class UserJoinView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class DeleteUserView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, username, *args, **kwargs):
+        if request.user.username != username:
+            return Response({"message": "본인이 아니면 탈퇴할 수 없습니다."}, status=status.HTTP_403_FORBIDDEN)
+
+        password = request.data.get('password')
+        if not password or not check_password(password, request.user.password):
+            return Response({"detail": "잘못된 비밀번호입니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+        request.user.delete()
+        return Response({"detail": "회원 탈퇴가 완료되었습니다."}, status=status.HTTP_204_NO_CONTENT)
+    
     
 class TokenBlacklistView(OriginalTokenBlacklistView):
     def post(self, request, *args, **kwargs):
@@ -22,17 +39,3 @@ class TokenBlacklistView(OriginalTokenBlacklistView):
             return Response({"message": "리플래쉬 토큰이 블랙리스트에 추가되었습니다."}, status=status.HTTP_205_RESET_CONTENT)
         return response
 
-@api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
-def delete_user(request, username):
-    if request.user.username != username:
-        return Response({'error': '당신은 탈퇴하려는 회원 본인이 아닙니다.'}, status=status.HTTP_403_FORBIDDEN)
-
-    user = request.user
-    serializer = UserSerializer(user, data=request.data, partial=True)
-    if serializer.is_valid():
-        serializer.delete_user(user, serializer.validated_data)
-        return Response({'message': '회원 탈퇴가 완료되었습니다.'}, status=status.HTTP_204_NO_CONTENT)
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
