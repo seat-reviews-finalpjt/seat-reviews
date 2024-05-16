@@ -45,4 +45,4 @@ class CommentLike(models.Model):
     liked_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('user', 'comment')
+        unique_together = ('user', 'comment')  # 중복 방지
