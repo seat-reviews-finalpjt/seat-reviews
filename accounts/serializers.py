@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from .models import User
+from django.contrib.auth import authenticate
+from rest_framework.response import Response
+from rest_framework import status
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,3 +15,11 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)  # 비밀번호 해싱 자동 처리
         return user
+    
+    def delete_user(self, instance, validated_data):
+        password = validated_data.get('password')
+        user = authenticate(username=instance.username, password=password)
+        if user is None:
+            raise serializers.ValidationError({'password': '잘못된 패스워드입니다.'})
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

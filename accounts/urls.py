@@ -3,6 +3,8 @@ from . import views
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 urlpatterns = [
-    path("signup/", views.UserJoinView.as_view()),
-    path("login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("signup/", views.UserJoinView.as_view(), name="signup"),
+    path("login/", TokenObtainPairView.as_view(), name="login"),
+    path("logout/", views.TokenBlacklistView.as_view(), name="logout"),
+    path("acoounts/<str:username>/", views.delete_user, name="delete_user"),
 ]
