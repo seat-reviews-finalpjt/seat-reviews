@@ -60,14 +60,14 @@ class ArticleLikeUnlike(generics.UpdateAPIView, generics.DestroyAPIView):
 # 댓글 작성 및 목록 조회
 class CommentListAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
-    def get(self, request, pk):
-        comments = Comment.objects.filter(article=pk)
+    def get(self, request, article_pk):
+        comments = Comment.objects.filter(article=article_pk)
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
-    def post(self, request, pk):
+    def post(self, request, article_pk):
         parent_comment_id = request.data.get('parent_comment_id')
         serializer = CommentSerializer(data=request.data)
-        article = get_object_or_404(Article, pk=pk)
+        article = get_object_or_404(Article, pk=article_pk)
         if parent_comment_id:  # 대댓글인 경우
             try:
                 parent_comment = Comment.objects.get(pk=parent_comment_id)
@@ -88,7 +88,7 @@ class CommentListAPIView(APIView):
 # 댓글 수정 및 삭제
 class CommentDetailAPIView(APIView):
 
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_object(self, article_pk, comment_pk):
         try:
