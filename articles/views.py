@@ -59,29 +59,28 @@ class ArticleLikeUnlike(generics.UpdateAPIView, generics.DestroyAPIView):
 
 # 댓글 작성 및 목록 조회
 class CommentListAPIView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     def get(self, request, pk):
         comments = Comment.objects.filter(article=pk)
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
-
     def post(self, request, pk):
         parent_comment_id = request.data.get('parent_comment_id')
         serializer = CommentSerializer(data=request.data)
-
+        article = get_object_or_404(Article, pk=pk)
         if parent_comment_id:  # 대댓글인 경우
             try:
                 parent_comment = Comment.objects.get(pk=parent_comment_id)
             except Comment.DoesNotExist:
                 return Response({"error": "상위 댓글이 존재하지 않습니다."}, status=status.HTTP_400_BAD_REQUEST)
-
             if serializer.is_valid():
-                serializer.save(parent_comment=parent_comment)
+                serializer.save(commenter=request.user,
+                                parent_comment=parent_comment, article=article)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
         else:  # 일반 댓글인 경우
             if serializer.is_valid():
-                serializer.save()
+                serializer.save(commenter=request.user, article=article)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
