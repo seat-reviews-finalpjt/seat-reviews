@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Articles</title>
+</head>
+<body>
+    <h1>Articles</h1>
+    <ul>
+        {% for article in articles %}
+            <li>
+                <h2>{{ article.title }}</h2>
+                <img src="{{ article.photo.url }}" alt="{{ article.title }}" style="max-width: 200px; max-height: 200px;">
+                <p>{{ article.description }}</p>
+                <p>Author: {{ article.author.username }}</p>
+                <p>Created at: {{ article.created_at }}</p>
+                <form id="like-form-{{ article.pk }}" data-article-id="{{ article.pk }}">
+                    {% csrf_token %}
+                    <button type="button" onclick="likeUnlikeArticle({{ article.pk }})">Like</button>
+                    <button type="button" onclick="dislikeArticle({{ article.pk }})">Dislike</button>
+                    <button type="button" onclick="editArticle({{ article.pk }})">Edit</button>
+                    <button type="button" onclick="deleteArticle({{ article.pk }})">Delete</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <!-- 게시글 작성 폼 -->
+    <form id="create-article-form">
+        {% csrf_token %}
+        <input type="text" id="title" placeholder="제목">
+        <input type="file" id="photo" accept="photos/*"> <!-- 이미지 파일 업로드 -->
+        <textarea id="description" placeholder="내용"></textarea>
+        <button type="button" onclick="createArticle()">게시글 작성</button>
+    </form>
+
+
+    <script>
+        function likeUnlikeArticle(articleId) {
+            var formData = new FormData();
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+            formData.append('article_id', articleId);
+            
+            var xhr = new XMLHttpRequest();
+            xhr.open('PUT', '/articles/' + articleId + '/like/', true);
+            xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');  // CSRF 토큰 설정
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    alert(response.detail); // 좋아요 결과 메시지 표시
+                    // 여기에 좋아요 상태를 업데이트하는 추가 로직을 작성할 수 있습니다.
+                } else {
+                    alert('오류가 발생했습니다.');
+                }
+            };
+            xhr.send(formData);
+        }
+
+
+        function dislikeArticle(articleId) {
+            var formData = new FormData();
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+            formData.append('article_id', articleId);
+            
+            var xhr = new XMLHttpRequest();
+            xhr.open('DELETE', '/articles/' + articleId + '/like/', true);
+            xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');  // CSRF 토큰 설정
+            xhr.onload = function () {
+                if (xhr.status === 204) {
+                    alert("게시글 좋아요 취소 완료!");
+                    // 여기에 좋아요 상태를 업데이트하는 추가 로직을 작성할 수 있습니다.
+                } else {
+                    alert('오류가 발생했습니다.');
+                }
+            };
+            xhr.send(formData);
+        }
+
+
+        function editArticle(articleId) {
+            // 사용자로부터 제목과 내용을 입력받습니다.
+            var newTitle = prompt("새로운 제목을 입력하세요:");
+            var newDescription = prompt("새로운 내용을 입력하세요:");
+    
+            // 사용자가 이미지 파일을 선택할 수 있는 파일 입력 필드를 생성합니다.
+            var input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+    
+            // 파일 선택 다이얼로그를 열고, 사용자가 이미지 파일을 선택하면 처리합니다.
+            input.onchange = function(event) {
+                var file = event.target.files[0]; // 선택한 파일 가져오기
+                if (file) {
+                    // 선택한 이미지 파일이 있으면 수정 요청을 보냅니다.
+                    sendEditRequest(articleId, newTitle, newDescription, file);
+                } else {
+                    alert("이미지 파일을 선택하세요.");
+                }
+            };
+    
+            // 파일 선택 다이얼로그를 엽니다.
+            input.click();
+        }
+    
+        function sendEditRequest(articleId, newTitle, newDescription, file) {
+            // 수정할 게시글의 데이터를 FormData 객체로 생성합니다.
+            var formData = new FormData();
+    
+            // 새로운 제목과 내용을 FormData에 추가합니다.
+            formData.append('title', newTitle);
+            formData.append('description', newDescription);
+            formData.append('photo', file); // 이미지 파일을 FormData에 추가합니다.
+    
+            // 수정할 게시글의 URL을 가져옵니다.
+            var editUrl = '/articles/' + articleId + '/';
+    
+            // 수정 요청을 보냅니다.
+            fetch(editUrl, {
+                method: 'PUT',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}' // CSRF 토큰 설정
+                },
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("게시글이 성공적으로 수정되었습니다.");
+                    location.reload(); // 수정 후 새로고침
+                } else {
+                    alert("게시글 수정에 실패했습니다.");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("오류가 발생했습니다.");
+            });
+        }
+
+
+
+
+        function deleteArticle(articleId) {
+            // 삭제할 게시글의 URL을 가져옵니다.
+            var deleteUrl = '/articles/' + articleId + '/';
+        
+            // 삭제 요청을 보냅니다.
+            fetch(deleteUrl, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}' // CSRF 토큰 설정
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("게시글이 성공적으로 삭제되었습니다.");
+                    location.reload();
+                } else {
+                    alert("게시글 삭제에 실패했습니다.");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("오류가 발생했습니다.");
+            });
+        }
+
+
+        function createArticle() {
+            var formData = new FormData();
+            formData.append('title', document.getElementById('title').value);
+            formData.append('photo', document.getElementById('photo').files[0]);
+            formData.append('description', document.getElementById('description').value);
+
+            fetch('/articles/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("게시글이 성공적으로 작성되었습니다.");
+                    location.reload(); // 작성 후 새로고침
+                } else {
+                    alert("게시글 작성에 실패했습니다.");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("오류가 발생했습니다.");
+            });
+        }
+    </script>
+</body>
+</html>

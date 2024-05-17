@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comments</title>
+</head>
+<body>
+    <h1> Comments</h1>
+    <ul>
+        {% for comment in comments %}
+        <li>
+            <p> {{comment.content}} </p>
+            <p> Commenter: {{ comment.commenter.username}} </p>
+            <p> Created at: {{ comment.created_at }} </p>
+            <form id="like-form-{{ comment.pk }}" data-article-id="{{ comment.pk }}">
+                {% csrf_token %}
+                <button type="button" onclick="likeUnlikeArticle({{ comment.pk }})">Like</button>
+                <button type="button" onclick="dislikeArticle({{ comment.pk }})">Dislike</button>
+                <button type="button" onclick="editArticle({{ comment.pk }})">Edit</button>
+                <button type="button" onclick="deleteArticle({{ comment.pk }})">Delete</button>
+            </form>
+        </li>
+    {% endfor %}
+    </ul>
+
+
+
+
+</body>
+</html>

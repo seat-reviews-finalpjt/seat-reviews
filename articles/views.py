@@ -6,6 +6,7 @@ from .serializers import ArticleSerializer, CommentSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
+from .permissions import IsOwnerOrReadOnly
 
 
 # 게시글 작성 및 목록 조회
@@ -40,7 +41,7 @@ class ArticleLikeUnlike(generics.UpdateAPIView, generics.DestroyAPIView):
     # permissions.IsAuthenticated 테스트 해보려고 아무나 가능하도록 해놨음
     permission_classes = [permissions.AllowAny]
 
-    def put(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         article = self.get_object()
         user = request.user
         like, created = ArticlesLike.objects.get_or_create(
@@ -59,29 +60,28 @@ class ArticleLikeUnlike(generics.UpdateAPIView, generics.DestroyAPIView):
 
 # 댓글 작성 및 목록 조회
 class CommentListAPIView(APIView):
-    def get(self, request, pk):
-        comments = Comment.objects.filter(article=pk)
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    def get(self, request, article_pk):
+        comments = Comment.objects.filter(article=article_pk)
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
-
-    def post(self, request, pk):
+    def post(self, request, article_pk):
         parent_comment_id = request.data.get('parent_comment_id')
         serializer = CommentSerializer(data=request.data)
-
+        article = get_object_or_404(Article, pk=article_pk)
         if parent_comment_id:  # 대댓글인 경우
             try:
                 parent_comment = Comment.objects.get(pk=parent_comment_id)
             except Comment.DoesNotExist:
                 return Response({"error": "상위 댓글이 존재하지 않습니다."}, status=status.HTTP_400_BAD_REQUEST)
-
             if serializer.is_valid():
-                serializer.save(parent_comment=parent_comment)
+                serializer.save(commenter=request.user,
+                                parent_comment=parent_comment, article=article)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
         else:  # 일반 댓글인 경우
             if serializer.is_valid():
-                serializer.save()
+                serializer.save(commenter=request.user, article=article)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -89,7 +89,7 @@ class CommentListAPIView(APIView):
 # 댓글 수정 및 삭제
 class CommentDetailAPIView(APIView):
 
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def get_object(self, article_pk, comment_pk):
         try:
@@ -104,8 +104,8 @@ class CommentDetailAPIView(APIView):
 
     def put(self, request, article_pk, comment_pk):
         comment = self.get_object(article_pk, comment_pk)
+        self.check_object_permissions(request, comment)  # Check permissions
         serializer = CommentSerializer(comment, data=request.data)
-        self.check_object_permissions(request, comment)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -113,14 +113,17 @@ class CommentDetailAPIView(APIView):
 
     def delete(self, request, article_pk, comment_pk):
         comment = self.get_object(article_pk, comment_pk)
-        self.check_object_permissions(request, comment)
+        self.check_object_permissions(request, comment)  # Check permissions
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 # 댓글 좋아요 기능
 
 
 class CommentLikeUnlikeAPIView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def post(self, request, article_pk, comment_pk):
         try:
             comment = Comment.objects.get(pk=comment_pk)
