@@ -41,7 +41,7 @@ class ArticleLikeUnlike(generics.UpdateAPIView, generics.DestroyAPIView):
     # permissions.IsAuthenticated 테스트 해보려고 아무나 가능하도록 해놨음
     permission_classes = [permissions.AllowAny]
 
-    def put(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         article = self.get_object()
         user = request.user
         like, created = ArticlesLike.objects.get_or_create(
