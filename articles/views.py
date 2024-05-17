@@ -88,12 +88,8 @@ class CommentListAPIView(APIView):
 
 # 댓글 수정 및 삭제
 class CommentDetailAPIView(APIView):
-<<<<<<< HEAD
-    permission_classes = [IsAuthenticatedOrReadOnly]
-=======
 
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
->>>>>>> 6a3567cc0f33aa5f3ebef9e598e69c5e126e7003
 
     def get_object(self, article_pk, comment_pk):
         try:
