@@ -9,14 +9,21 @@ from rest_framework_simplejwt.views import TokenBlacklistView as OriginalTokenBl
 from rest_framework.permissions import AllowAny
 from django.shortcuts import get_object_or_404
 from .models import User
+from django.shortcuts import render
+from django.contrib import messages
 
 class UserJoinView(APIView):
     permission_classes = [AllowAny]  # 모든 요청 허용
     authentication_classes = []
+    
+    def get(self, request):
+        return render(request, 'signup.html')
+    
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            user = serializer.save()
+            messages.success(request, f'회원가입이 완료되었습니다. 환영합니다, {user.username}님!')
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
