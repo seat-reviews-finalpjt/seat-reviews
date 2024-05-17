@@ -6,6 +6,7 @@ from .serializers import ArticleSerializer, CommentSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
+from .permissions import IsOwnerOrReadOnly
 
 
 # 게시글 작성 및 목록 조회
@@ -93,7 +94,7 @@ class CommentListAPIView(APIView):
 # 댓글 수정 및 삭제
 class CommentDetailAPIView(APIView):
 
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def get_object(self, article_pk, comment_pk):
         try:
@@ -108,21 +109,19 @@ class CommentDetailAPIView(APIView):
 
     def put(self, request, article_pk, comment_pk):
         comment = self.get_object(article_pk, comment_pk)
+        self.check_object_permissions(request, comment)  # Check permissions
         serializer = CommentSerializer(comment, data=request.data)
-        self.check_object_permissions(request, comment)
-        if serializer.is_valid() and request.user == comment.commenter:
+        if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, article_pk, comment_pk):
         comment = self.get_object(article_pk, comment_pk)
-        self.check_object_permissions(request, comment)
-        if request.user == comment.commenter:
-            comment.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+        self.check_object_permissions(request, comment)  # Check permissions
+        comment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 # 댓글 좋아요 기능
 
