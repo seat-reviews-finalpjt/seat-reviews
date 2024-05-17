@@ -87,8 +87,7 @@ class CommentListAPIView(APIView):
 
 # 댓글 수정 및 삭제
 class CommentDetailAPIView(APIView):
-
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_object(self, article_pk, comment_pk):
         try:
@@ -105,7 +104,7 @@ class CommentDetailAPIView(APIView):
         comment = self.get_object(article_pk, comment_pk)
         serializer = CommentSerializer(comment, data=request.data)
         self.check_object_permissions(request, comment)
-        if serializer.is_valid():
+        if serializer.is_valid() and request.user == comment.commenter:
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -113,13 +112,18 @@ class CommentDetailAPIView(APIView):
     def delete(self, request, article_pk, comment_pk):
         comment = self.get_object(article_pk, comment_pk)
         self.check_object_permissions(request, comment)
-        comment.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        if request.user == comment.commenter:
+            comment.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response(status=status.HTTP_403_FORBIDDEN)
 
 # 댓글 좋아요 기능
 
 
 class CommentLikeUnlikeAPIView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def post(self, request, article_pk, comment_pk):
         try:
             comment = Comment.objects.get(pk=comment_pk)
