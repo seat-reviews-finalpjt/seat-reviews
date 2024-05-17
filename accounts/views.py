@@ -1,3 +1,4 @@
+from django.contrib import messages
 from rest_framework import status
 from rest_framework.views import APIView
 from django.contrib.auth.hashers import check_password
@@ -7,18 +8,16 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenBlacklistView as OriginalTokenBlacklistView
 from rest_framework.permissions import AllowAny
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from .models import User
-from django.shortcuts import render
-from django.contrib import messages
 
 class UserJoinView(APIView):
-    permission_classes = [AllowAny]  # 모든 요청 허용
+    permission_classes = [AllowAny]
     authentication_classes = []
-    
+
     def get(self, request):
         return render(request, 'signup.html')
-    
+
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
