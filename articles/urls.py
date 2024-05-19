@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ArticleList, ArticleDetail, ArticleLikeUnlike, CommentListAPIView, CommentDetailAPIView, CommentLikeUnlikeAPIView
+from .views import ArticleList, ArticleDetail, ArticleLikeUnlike, CommentListAPIView, CommentDetailAPIView, CommentLikeUnlikeAPIView, comment_view
 
 urlpatterns = [
     path('', ArticleList.as_view(), name='article-list'),
@@ -12,4 +12,6 @@ urlpatterns = [
          CommentDetailAPIView.as_view(), name='comment-detail'),
     path('<int:article_pk>/comments/<int:comment_pk>/like/',
          CommentLikeUnlikeAPIView.as_view(), name='article-like-unlike'),
+    path('<int:article_id>/commenttest/',
+         comment_view, name='comment-view'),
 ]

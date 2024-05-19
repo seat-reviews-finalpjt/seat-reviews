@@ -6,26 +6,194 @@
     <title>Comments</title>
 </head>
 <body>
-    <h1> Comments</h1>
+
+    <h1>Comments</h1>
+    
+    <form id="create-comment-form" data-article-id="{{article.pk}}">
+        {% csrf_token %}
+        <textarea id="content" placeholder="내용"></textarea>
+        <button type="button" id="submit-comment">댓글 작성</button>
+    </form>
+
     <ul>
         {% for comment in comments %}
-        <li>
-            <p> {{comment.content}} </p>
-            <p> Commenter: {{ comment.commenter.username}} </p>
-            <p> Created at: {{ comment.created_at }} </p>
-            <form id="like-form-{{ comment.pk }}" data-article-id="{{ comment.pk }}">
-                {% csrf_token %}
-                <button type="button" onclick="likeUnlikeArticle({{ comment.pk }})">Like</button>
-                <button type="button" onclick="dislikeArticle({{ comment.pk }})">Dislike</button>
-                <button type="button" onclick="editArticle({{ comment.pk }})">Edit</button>
-                <button type="button" onclick="deleteArticle({{ comment.pk }})">Delete</button>
-            </form>
-        </li>
-    {% endfor %}
+            <li>
+                <p>{{ comment.content }}</p>
+                <p>Author: {{ comment.commenter.username }}</p>
+                <p>Created at: {{ comment.created_at }}</p>
+                <form id="like-form-{{ comment.pk }}" data-comment-id="{{ comment.pk }}">
+                    {% csrf_token %}
+                    <button type="button" class="like-unlike-button" data-comment-id="{{ comment.pk }}">Like</button>
+                    <button type="button" class="dislike-button" data-comment-id="{{ comment.pk }}">Dislike</button>
+                    <button type="button" class="edit-button" data-comment-id="{{ comment.pk }}">Edit</button>
+                    <button type="button" class="delete-button" data-comment-id="{{ comment.pk }}">Delete</button>
+                </form>
+            </li>
+        {% endfor %}
     </ul>
 
+    <script> 
+        // onclick button 과 fetch 간 활동 원활 X, 각 기능에 따른 리스너 추가
+        document.addEventListener('DOMContentLoaded', function () {
+            var submitButton = document.getElementById('submit-comment');
+            submitButton.addEventListener('click', function() {
+                var articleId = document.getElementById('create-comment-form').getAttribute('data-article-id');
+                createComment(articleId);
+            });
+    
+            var editButtons = document.querySelectorAll('.edit-button');
+            editButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var commentId = this.getAttribute('data-comment-id');
+                    var articleId = document.getElementById('create-comment-form').getAttribute('data-article-id');
+                    editComment(articleId, commentId); 
+                });
+            });
 
+            var deleteButtons = document.querySelectorAll('.delete-button');
+            deleteButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var commentId = this.getAttribute('data-comment-id');
+                    var articleId = document.getElementById('create-comment-form').getAttribute('data-article-id');
+                    deleteComment(articleId, commentId);
+                });
+            });
 
+            var likeUnlikeButtons = document.querySelectorAll('.like-unlike-button');
+            likeUnlikeButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var commentId = this.getAttribute('data-comment-id');
+                    var articleId = document.getElementById('create-comment-form').getAttribute('data-article-id');
+                    likeUnlikeComment(articleId, commentId); 
+                });
+            });
+    
+            var dislikeButtons = document.querySelectorAll('.dislike-button');
+            dislikeButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var commentId = this.getAttribute('data-comment-id');
+                    var articleId = document.getElementById('create-comment-form').getAttribute('data-article-id');
+                    dislikeComment(articleId, commentId); 
+                });
+            });
+        });
 
+        // 각 기능 구현
+        function createComment(articleId){
+            var formData = new FormData();
+            var createUrl = `/articles/${articleId}/comments/`;
+
+            formData.append('content', document.getElementById('content').value);
+            console.log('fetch 전');
+            fetch(createUrl,{
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{csrf_token}}'
+                },
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("댓글이 성공적으로 작성되었습니다.");
+                    location.reload(); 
+                } else {
+                    alert("댓글 작성에 실패했습니다.");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("오류가 발생했습니다.");
+            });
+        }
+
+        function editComment(articleId, commentId) {
+            var formData = new FormData();
+            var newContent = prompt("새로운 내용을 입력하세요:");
+            var editUrl = `/articles/${articleId}/comments/${commentId}/`;
+            formData.append('content',newContent);
+
+            fetch(editUrl, {
+                method: 'PUT',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("댓글이 성공적으로 수정되었습니다.");
+                    location.reload();
+                } else {
+                    alert("댓글 수정에 실패했습니다.");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("오류가 발생했습니다.");
+            });
+        }
+
+        function deleteComment(articleId) {
+            var deleteUrl = '/articles/${articleId}/comments/${commentId}/';
+
+            fetch(deleteUrl, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}' 
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("댓글이 성공적으로 삭제되었습니다.");
+                    location.reload();
+                } else {
+                    alert("댓글 삭제에 실패했습니다.");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("오류가 발생했습니다.");
+            });
+        }
+
+        function likeUnlikeComment(articleId, commentId) {
+            var formData = new FormData();
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+            formData.append('article_id', articleId);
+            formData.append('comment_id', commentId);
+            
+            var xhr = new XMLHttpRequest();
+            xhr.open('PUT', `/articles/${articleId}/comments/${commentId}/like/`, true);
+            xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}');  
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    alert(response.detail);
+                } else {
+                    alert('오류가 발생했습니다.');
+                }
+            };
+            xhr.send(formData);
+        }
+
+        function dislikeComment(articleId, commentId) {
+            var formData = new FormData();
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+            formData.append('article_id', articleId);
+            formData.append('comment_id', commentId);
+            
+            var xhr = new XMLHttpRequest();
+            xhr.open('DELETE', `/articles/${articleId}/comments/${commentId}/like/`, true);
+            xhr.setRequestHeader('X-CSRFToken', '{{ csrf_token }}'); 
+            xhr.onload = function () {
+                if (xhr.status === 204) {
+                    alert("댓글 좋아요 취소 완료!");
+                } else {
+                    alert('오류가 발생했습니다.');
+                }
+            };
+            xhr.send(formData);
+        }
+    </script>
 </body>
 </html>

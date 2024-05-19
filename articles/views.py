@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from .models import Article, ArticlesLike, Comment, CommentLike
 from .serializers import ArticleSerializer, CommentSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
 from .permissions import IsOwnerOrReadOnly
 
@@ -61,10 +61,12 @@ class ArticleLikeUnlike(generics.UpdateAPIView, generics.DestroyAPIView):
 # 댓글 작성 및 목록 조회
 class CommentListAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get(self, request, article_pk):
         comments = Comment.objects.filter(article=article_pk)
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
+
     def post(self, request, article_pk):
         parent_comment_id = request.data.get('parent_comment_id')
         serializer = CommentSerializer(data=request.data)
@@ -151,3 +153,12 @@ class CommentLikeUnlikeAPIView(APIView):
         like = get_object_or_404(CommentLike, user=user, comment=comment)
         like.delete()
         return Response({"detail": "댓글 안좋아요 완료!"}, status=status.HTTP_204_NO_CONTENT)
+
+
+def comment_view(request, article_id):
+
+    article = get_object_or_404(Article, pk=article_id)
+    comments = Comment.objects.filter(article=article)
+    context = {'article': article, 'comments': comments}
+
+    return render(request, 'comment.html', context)
