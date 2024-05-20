@@ -134,7 +134,7 @@
         }
 
         function deleteComment(articleId) {
-            var deleteUrl = '/articles/${articleId}/comments/${commentId}/';
+            var deleteUrl = `/articles/${articleId}/comments/${commentId}/`;
 
             fetch(deleteUrl, {
                 method: 'DELETE',
