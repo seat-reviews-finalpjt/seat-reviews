@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 function Logout() {
     const navigate = useNavigate();
+    const [message, setMessage] = useState('');
 
     useEffect(() => {
         const logout = async () => {
@@ -14,8 +15,12 @@ function Logout() {
                     }
                 });
                 localStorage.removeItem('token');
-                navigate('/login');
+                setMessage('Logout successful!');
+                setTimeout(() => {
+                    navigate('/login');
+                }, 2000); // 2초 후에 로그인 페이지로 이동
             } catch (error) {
+                setMessage('Failed to logout.');
                 console.error('Failed to logout', error);
             }
         };
@@ -26,6 +31,7 @@ function Logout() {
     return (
         <div>
             <h2>Logging out...</h2>
+            {message && <p>{message}</p>}
         </div>
     );
 }
