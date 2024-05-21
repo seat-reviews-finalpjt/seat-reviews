@@ -15,9 +15,6 @@ class UserJoinView(APIView):
     permission_classes = [AllowAny]
     authentication_classes = []
 
-    def get(self, request):
-        return render(request, 'accounts/signup.html')
-
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
