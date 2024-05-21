@@ -16,7 +16,7 @@ class UserJoinView(APIView):
     authentication_classes = []
 
     def get(self, request):
-        return render(request, 'signup.html')
+        return render(request, 'accounts/signup.html')
 
     def post(self, request):
         serializer = UserSerializer(data=request.data)
