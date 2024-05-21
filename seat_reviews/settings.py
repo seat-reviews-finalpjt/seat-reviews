@@ -43,9 +43,11 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     'django_seed',
-    
+
     'accounts',
     'articles',
+
+    'channels'
 ]
 
 
@@ -89,8 +91,18 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = 'seat_reviews.asgi.application'  # channel 관련 추가
+
 WSGI_APPLICATION = 'seat_reviews.wsgi.application'
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}  # channel 관련 추가
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
