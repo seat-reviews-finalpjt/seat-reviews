@@ -15,7 +15,7 @@ function Login() {
                 username,
                 password,
             });
-            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('token', response.data.access); // 저장하는 토큰 확인
             setMessage('Login successful!');
             setTimeout(() => {
                 navigate('/');
@@ -26,7 +26,6 @@ function Login() {
         }
     };
 
-    // 스타일 정의
     const messageStyle = {
         color: 'green',
         fontWeight: 'bold',
@@ -42,7 +41,7 @@ function Login() {
     return (
         <div>
             <h2>Login</h2>
-            {message && <p style={message.includes('failed') ? errorStyle : messageStyle}>{message}</p>} {/* 메시지를 표시하는 부분 */}
+            {message && <p style={message.includes('failed') ? errorStyle : messageStyle}>{message}</p>}
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>Username</label>

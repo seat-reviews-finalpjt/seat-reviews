@@ -12,36 +12,58 @@ function UserProfile() {
     useEffect(() => {
         const fetchUserProfile = async () => {
             try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    setMessage('No token found. Please log in.');
+                    return;
+                }
+
                 const response = await axios.get(`http://localhost:8000/accounts/${username}/`, {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                        Authorization: `Bearer ${token}`
                     }
                 });
                 setUser(response.data);
             } catch (error) {
-                setMessage('Failed to fetch user profile.');
+                if (error.response && error.response.status === 401) {
+                    setMessage('Unauthorized. Please log in.');
+                    navigate('/login');
+                } else {
+                    setMessage('Failed to fetch user profile.');
+                }
                 console.error('Failed to fetch user profile', error);
             }
         };
 
         fetchUserProfile();
-    }, [username]);
+    }, [username, navigate]);
 
     const handleDelete = async () => {
         try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                setMessage('No token found. Please log in.');
+                return;
+            }
+
             await axios.delete(`http://localhost:8000/accounts/${username}/`, {
                 headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
+                    Authorization: `Bearer ${token}`
                 },
                 data: { password }
             });
             setMessage('User deleted successfully!');
             localStorage.removeItem('token');
             setTimeout(() => {
-                navigate('/signup');
-            }, 2000); // 2초 후에 회원가입 페이지로 이동
+                navigate('/');
+            }, 2000); // 2초 후에 메인 페이지로 이동
         } catch (error) {
-            setMessage('Failed to delete user. Please check your password.');
+            if (error.response && error.response.status === 401) {
+                setMessage('Unauthorized. Please log in.');
+                navigate('/login');
+            } else {
+                setMessage('Failed to delete user. Please check your password.');
+            }
             console.error('Failed to delete user', error);
         }
     };
