@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import axios from 'axios';
 import Login from './Login';
 import Home from './Home';
 import Logout from './Logout';
@@ -12,25 +11,23 @@ function App() {
     const [username, setUsername] = useState('');
 
     useEffect(() => {
-        const checkLoginStatus = async () => {
-            const token = localStorage.getItem('token');
-            if (token) {
-                try {
-                    const response = await axios.get('http://localhost:8000/accounts/me/', {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    });
-                    setUsername(response.data.username);
-                    setIsLoggedIn(true);
-                } catch (error) {
-                    console.error('Failed to fetch user info', error);
-                }
-            }
-        };
-
-        checkLoginStatus();
+        // 로그인 상태를 로컬 스토리지에서 확인
+        const token = localStorage.getItem('token');
+        const storedUsername = localStorage.getItem('username');
+        if (token && storedUsername) {
+            setUsername(storedUsername);
+            setIsLoggedIn(true);
+        }
     }, []);
+
+    // 로그아웃 함수
+    const handleLogout = () => {
+        // 로컬 스토리지에서 토큰과 유저명 제거
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        setIsLoggedIn(false);
+        setUsername('');
+    };
 
     return (
         <Router>
@@ -40,7 +37,8 @@ function App() {
                     {isLoggedIn ? (
                         <>
                             <span>{username}님 안녕하세요</span>
-                            <Link to="/logout" onClick={() => setIsLoggedIn(false)}>Logout</Link>
+                            {/* 로그아웃 버튼에 onClick 이벤트 추가 */}
+                            <Link to="/" onClick={handleLogout}>Logout</Link>
                             <Link to={`/profile/${username}`}>Profile</Link>
                         </>
                     ) : (
@@ -52,8 +50,10 @@ function App() {
                 </nav>
                 <Routes>
                     <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} />} />
+                    {/* Home 컴포넌트에 isLoggedIn 상태 전달 */}
                     <Route path="/" element={<Home isLoggedIn={isLoggedIn} />} />
-                    <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} />} />
+                    {/* Logout 컴포넌트에 setIsLoggedIn 함수 전달 */}
+                    <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} />} />
                     <Route path="/profile/:username" element={<UserProfile />} />
                     <Route path="/signup" element={<SignUp />} />
                 </Routes>
