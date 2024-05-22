@@ -23,6 +23,7 @@ class UserJoinView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class UserProfileView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -59,6 +60,8 @@ class UserProfileView(APIView):
     
 class TokenBlacklistView(OriginalTokenBlacklistView):
     def post(self, request, *args, **kwargs):
+        print(f"Request data: {request.data}")
+        print(f"Request headers: {request.headers}")
         response = super().post(request, *args, **kwargs)
         if response.status_code == status.HTTP_200_OK:
             return Response({"message": "리플래쉬 토큰이 블랙리스트에 추가되었습니다."}, status=status.HTTP_205_RESET_CONTENT)
