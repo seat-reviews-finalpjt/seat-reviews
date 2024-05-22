@@ -2,19 +2,26 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-function Logout() {
+function Logout({ setIsLoggedIn, setUsername }) {
     const navigate = useNavigate();
     const [message, setMessage] = useState('');
 
     useEffect(() => {
         const logout = async () => {
             try {
-                await axios.post('http://localhost:8000/accounts/logout/', null, {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    throw new Error('No token found');
+                }
+                
+                await axios.post('http://localhost:8000/accounts/logout/', {}, {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                        Authorization: `Bearer ${token}`
                     }
                 });
                 localStorage.removeItem('token');
+                setIsLoggedIn(false);
+                setUsername('');
                 setMessage('Logout successful!');
                 setTimeout(() => {
                     navigate('/login');
@@ -26,7 +33,7 @@ function Logout() {
         };
 
         logout();
-    }, [navigate]);
+    }, [navigate, setIsLoggedIn, setUsername]);
 
     return (
         <div>

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-function Login() {
-    const [username, setUsername] = useState('');
+function Login({ setIsLoggedIn, setUsername }) {
+    const [username, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
@@ -15,8 +15,12 @@ function Login() {
                 username,
                 password,
             });
-            localStorage.setItem('token', response.data.access); // 저장하는 토큰 확인
+            const token = response.data.access;
+            console.log('Received token:', token); // 토큰 확인용 로그
+            localStorage.setItem('token', token); // JWT 토큰 저장
             setMessage('Login successful!');
+            setIsLoggedIn(true);
+            setUsername(username); // 상태 업데이트
             setTimeout(() => {
                 navigate('/');
             }, 2000); // 2초 후에 페이지 이동
@@ -48,7 +52,7 @@ function Login() {
                     <input 
                         type="text" 
                         value={username}
-                        onChange={(e) => setUsername(e.target.value)} 
+                        onChange={(e) => setUserName(e.target.value)} 
                     />
                 </div>
                 <div>

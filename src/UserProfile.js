@@ -15,6 +15,7 @@ function UserProfile() {
                 const token = localStorage.getItem('token');
                 if (!token) {
                     setMessage('No token found. Please log in.');
+                    navigate('/login');
                     return;
                 }
 
