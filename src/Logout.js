@@ -9,26 +9,36 @@ function Logout({ setIsLoggedIn, setUsername }) {
     useEffect(() => {
         const logout = async () => {
             try {
-                const token = localStorage.getItem('token');
-                if (!token) {
+                const accessToken = localStorage.getItem('token');
+                const refreshToken = localStorage.getItem('refresh_token'); // 리프레시 토큰 추가
+
+                if (!accessToken || !refreshToken) {
                     throw new Error('No token found');
                 }
-                
-                await axios.post('http://localhost:8000/accounts/logout/', {}, {
+
+                // 서버로 로그아웃 요청 보내기
+                const response = await axios.post('http://localhost:8000/accounts/logout/', {
+                    refresh: refreshToken // 리프레시 토큰을 포함하여 전송
+                }, {
                     headers: {
-                        Authorization: `Bearer ${token}`
+                        Authorization: `Bearer ${accessToken}`
                     }
                 });
+
+                console.log('Logout response:', response);
+
+                // 로컬 스토리지에서 토큰 제거 및 상태 업데이트
                 localStorage.removeItem('token');
+                localStorage.removeItem('refresh_token'); // 리프레시 토큰 제거
                 setIsLoggedIn(false);
                 setUsername('');
                 setMessage('Logout successful!');
                 setTimeout(() => {
-                    navigate('/login');
-                }, 2000); // 2초 후에 로그인 페이지로 이동
+                    navigate('/');
+                }, 1000); // 1초 후에 메인 페이지로 이동
             } catch (error) {
-                setMessage('Failed to logout.');
                 console.error('Failed to logout', error);
+                setMessage('Failed to logout.');
             }
         };
 
