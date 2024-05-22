@@ -44,37 +44,38 @@ function Home({ isLoggedIn }) {
     return (
         <div className="home-container">
             <header className="home-header">
-                <h2>홈</h2>
+                <h2>좋은 자리 알아봐</h2>
                 <nav>
                     <ul>
                         <li><Link to="/">홈</Link></li>
-                        <li><Link to="/about">소개</Link></li>
-                        <li><Link to="/contact">연락처</Link></li>
+                        {/* <li><Link to="/about">소개</Link></li>
+                        <li><Link to="/contact">연락처</Link></li> */}
                     </ul>
                 </nav>
             </header>
             <main>
-                <p>홈 페이지에 오신 것을 환영합니다!</p>
-                <div className="home-content">
-                    <section>
-                        <h3>검색</h3>
-                        <input
-                            type="text"
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            placeholder="검색어를 입력하세요"
-                        />
-                        <button onClick={handleSearch}>검색</button>
-                        {error && <p className="error">{error}</p>}
-                        <div>
-                            {articles.map((article) => (
-                                <div key={article.id}>
-                                    <h4>{article.title}</h4>
-                                    <p>{article.content}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
+                <div className="banner">
+                    <h1>좋은 자리 알아봐에 오신걸 환영합니다</h1>
+                    <p>알아보고 싶은 좌석이 있는 장소를 검색하세요!</p>
+                </div>
+                <div className="search-section">
+                    <h3>장소 검색</h3>
+                    <input
+                        type="text"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        placeholder="장소를 검색하세요"
+                    />
+                    <button onClick={handleSearch}>검색</button>
+                    {error && <p className="error">{error}</p>}
+                    <div className="search-results">
+                        {articles.map((article) => (
+                            <div key={article.id} className="article">
+                                <h4>{article.title}</h4>
+                                <p>{article.content}</p>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </main>
         </div>

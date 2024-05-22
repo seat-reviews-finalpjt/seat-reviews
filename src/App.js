@@ -1,3 +1,4 @@
+// App.js
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Login from './Login';
@@ -5,6 +6,7 @@ import Home from './Home';
 import Logout from './Logout';
 import UserProfile from './UserProfile';
 import SignUp from './SignUp';
+import './App.css';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -32,21 +34,33 @@ function App() {
     return (
         <Router>
             <div>
-                <nav>
-                    <Link to="/">Home</Link>
-                    {isLoggedIn ? (
-                        <>
-                            <span>{username}님 안녕하세요</span>
-                            {/* 로그아웃 버튼에 onClick 이벤트 추가 */}
-                            <Link to="/" onClick={handleLogout}>Logout</Link>
-                            <Link to={`/profile/${username}`}>Profile</Link>
-                        </>
-                    ) : (
-                        <>
-                            <Link to="/login">Login</Link>
-                            <Link to="/signup">Sign Up</Link>
-                        </>
-                    )}
+                <nav className="navbar"> {/* 네비게이션 바에 클래스 추가 */}
+                    <Link to="/" className="nav-logo">좋은 자리 알아봐</Link> {/* 홈로고에 클래스 추가 */}
+                    <ul className="nav-menu"> {/* 네비게이션 메뉴에 클래스 추가 */}
+                        {isLoggedIn ? (
+                            <>
+                                <li className="nav-item">
+                                    <span>{username}님 안녕하세요</span>
+                                </li>
+                                <li className="nav-item">
+                                    {/* 로그아웃 버튼에 onClick 이벤트 추가 */}
+                                    <Link to="/" onClick={handleLogout}>Logout</Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link to={`/profile/${username}`}>Profile</Link>
+                                </li>
+                            </>
+                        ) : (
+                            <>
+                                <li className="nav-item">
+                                    <Link to="/login">Login</Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link to="/signup">Sign Up</Link>
+                                </li>
+                            </>
+                        )}
+                    </ul>
                 </nav>
                 <Routes>
                     <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} />} />
