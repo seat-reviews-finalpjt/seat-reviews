@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './Login.css'; // 스타일링을 위한 CSS 파일
+import './Login.css';
 
 function Login({ setIsLoggedIn, setUsername }) {
     const [username, setUsernameInput] = useState('');

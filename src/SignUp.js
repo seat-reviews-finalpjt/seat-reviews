@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import './SignUp.css';
 
 function SignUp() {
     const [username, setUsername] = useState('');
@@ -53,67 +54,67 @@ function SignUp() {
     };
 
     return (
-        <div>
-            <h2>Sign Up</h2>
+        <div className="signup-container">
+            <h2>회원가입</h2>
             {message && <p style={messageStyle}>{message}</p>}
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Username</label>
+            <form onSubmit={handleSubmit} className="signup-form">
+                <div className="form-group">
+                    <label>아이디</label>
                     <input 
                         type="text" 
                         value={username}
                         onChange={(e) => setUsername(e.target.value)} 
                     />
                 </div>
-                <div>
-                    <label>Password</label>
+                <div className="form-group">
+                    <label>비밀번호</label>
                     <input 
                         type="password" 
                         value={password}
                         onChange={(e) => setPassword(e.target.value)} 
                     />
                 </div>
-                <div>
-                    <label>Nickname</label>
+                <div className="form-group">
+                    <label>닉네임</label>
                     <input 
                         type="text" 
                         value={nickname}
                         onChange={(e) => setNickname(e.target.value)} 
                     />
                 </div>
-                <div>
-                    <label>Name</label>
+                <div className="form-group">
+                    <label>이름</label>
                     <input 
                         type="text" 
                         value={name}
                         onChange={(e) => setName(e.target.value)} 
                     />
                 </div>
-                <div>
-                    <label>Gender</label>
+                <div className="form-group">
+                    <label>성별</label>
                     <select value={gender} onChange={(e) => setGender(e.target.value)}>
-                        <option value="">Select Gender</option>
-                        <option value="남성">Male</option>
-                        <option value="여성">Female</option>
-                        <option value="또 다른 성">Other</option>
+                        <option value="">성별 선택</option>
+                        <option value="남성">남성</option>
+                        <option value="여성">여성</option>
+                        <option value="기타">기타</option>
                     </select>
                 </div>
-                <div>
-                    <label>Birthday</label>
+                <div className="form-group">
+                    <label>생년월일</label>
                     <input 
                         type="date" 
                         value={birthday}
                         onChange={(e) => setBirthday(e.target.value)} 
                     />
                 </div>
-                <div>
-                    <label>Profile Image</label>
+                <div className="form-group">
+                    <label>프로필 이미지</label>
                     <input 
                         type="file" 
                         onChange={handleFileChange} 
                     />
                 </div>
-                <button type="submit">Sign Up</button>
+                <button type="submit" className="signup-btn">회원가입</button>
             </form>
         </div>
     );
