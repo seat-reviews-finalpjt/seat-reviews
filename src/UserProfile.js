@@ -76,7 +76,10 @@ function UserProfile() {
             {user ? (
                 <div>
                     <p>Username: {user.username}</p>
-                    <p>Profile Image: <img src={user.profile_image} alt="Profile" /></p>
+                    {/* Check if profile_image exists before rendering */}
+                    {user.profile_image && (
+                        <p>Profile Image: <img src={`http://localhost:8000${user.profile_image}`} alt="Profile" /></p>
+                    )}
                     <div>
                         <label>Password for deletion</label>
                         <input 
