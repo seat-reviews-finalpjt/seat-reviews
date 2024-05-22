@@ -1,11 +1,21 @@
-from django.shortcuts import render
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from .models import Notification
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 
-def notification_list(request):
-    notifications = Notification.objects.filter(
-        user=request.user, is_read=False)
-    return render(request, 'notifications.html', {'notifications': notifications})
+class CreateNotificationView(APIView):
+    permission_classes = [IsAuthenticated]
 
-
-# .html 구현X, .js 구현 X
+    def create_notification(self, from_user, to_user, message):
+        notification = Notification.objects.create(
+            user=to_user, message=message)
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f"notifications_{to_user.id}",
+            {
+                'type': 'send_notification',
+                'message': message
+            }
+        )
