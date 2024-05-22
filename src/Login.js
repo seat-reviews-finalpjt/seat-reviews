@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import './Login.css'; // 스타일링을 위한 CSS 파일
 
 function Login({ setIsLoggedIn, setUsername }) {
     const [username, setUsernameInput] = useState('');
@@ -24,23 +25,26 @@ function Login({ setIsLoggedIn, setUsername }) {
             navigate('/');
         } catch (error) {
             console.error('Login failed', error);
-            setError('Login failed. Please check your credentials and try again.');
+            setError('아이디 또는 비밀번호를 잘못 입력했습니다.입력하신 내용을 다시 확인해주세요.');
         }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label>Username:</label>
-                <input type="text" value={username} onChange={(e) => setUsernameInput(e.target.value)} />
-            </div>
-            <div>
-                <label>Password:</label>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-            </div>
-            {error && <p>{error}</p>}
-            <button type="submit">Login</button>
-        </form>
+        <div className="login-container">
+            <form onSubmit={handleSubmit} className="login-form">
+                <h2>좋은 자리 알아봐</h2>
+                <div className="form-group">
+                    <label>아이디:</label>
+                    <input type="text" value={username} onChange={(e) => setUsernameInput(e.target.value)} />
+                </div>
+                <div className="form-group">
+                    <label>비밀번호:</label>
+                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                </div>
+                {error && <p className="error">{error}</p>}
+                <button type="submit" className="login-btn">로그인</button>
+            </form>
+        </div>
     );
 }
 
