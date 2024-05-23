@@ -8,6 +8,7 @@ function UserProfile() {
     const [user, setUser] = useState(null);
     const [message, setMessage] = useState('');
     const [password, setPassword] = useState('');
+    const [showPasswordInput, setShowPasswordInput] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -40,7 +41,11 @@ function UserProfile() {
         fetchUserProfile();
     }, [username, navigate]);
 
-    const handleDelete = async () => {
+    const handleDeleteClick = () => {
+        setShowPasswordInput(true);
+    };
+
+    const handleDeleteConfirm = async () => {
         try {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -54,7 +59,7 @@ function UserProfile() {
                 },
                 data: { password }
             });
-            setMessage('User deleted successfully!');
+            setMessage('회원 탈퇴가 완료되었습니다.');
             localStorage.removeItem('token');
             setTimeout(() => {
                 navigate('/');
@@ -76,20 +81,25 @@ function UserProfile() {
             {message && <p>{message}</p>}
             {user ? (
                 <div className="user-profile-content">
-                    <p>아이디 : {user.username}</p>
-                    {/* Check if profile_image exists before rendering */}
+                    <p>아이디: {user.username}</p>
                     {user.profile_image && (
-                        <p>프로필 이미지 : <img src={`http://localhost:8000${user.profile_image}`} alt="Profile" /></p>
+                        <>
+                            <p>프로필 이미지:</p>
+                            <img src={`http://localhost:8000${user.profile_image}`} alt="Profile" />
+                        </>
                     )}
-                    <div>
-                        <label>비밀번호 재확인</label>
-                        <input 
-                            type="password" 
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)} 
-                        />
-                    </div>
-                    <button onClick={handleDelete}>회원 탈퇴</button>
+                    <button onClick={handleDeleteClick}>회원 탈퇴</button>
+                    {showPasswordInput && (
+                        <div>
+                            <label>비밀번호 재확인</label>
+                            <input 
+                                type="password" 
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)} 
+                            />
+                            <button onClick={handleDeleteConfirm}>확인</button>
+                        </div>
+                    )}
                 </div>
             ) : (
                 <p>Loading...</p>
