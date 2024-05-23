@@ -1,4 +1,3 @@
-
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from .models import Article, ArticlesLike, Comment, CommentLike
@@ -86,7 +85,7 @@ class CommentListAPIView(APIView):
                 notification_view.create_notification(
                     from_user=request.user,
                     to_user=parent_comment.commenter,
-                    message=f'Your comment has a new reply: {comment.text}'
+                    message=f'당신의 댓글에 새로운 댓글이 달렸습니다.: {comment.content}'
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -98,7 +97,7 @@ class CommentListAPIView(APIView):
                 notification_view.create_notification(
                     from_user=request.user,
                     to_user=article.author,
-                    message=f'Your post has a new comment: {comment.text}'
+                    message=f'당신의 글에 새로운 댓글이 달렸습니다.: {comment.content}'
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

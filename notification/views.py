@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Notification
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from django.shortcuts import render
 
 
 class CreateNotificationView(APIView):
@@ -19,3 +20,7 @@ class CreateNotificationView(APIView):
                 'message': message
             }
         )
+
+
+def notification_view(request):
+    return render(request, 'notification.html')

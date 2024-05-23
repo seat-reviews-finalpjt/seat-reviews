@@ -11,7 +11,7 @@ class NotificationConsumer(WebsocketConsumer):
             self.group_name, self.channel_name)
         self.accept()
 
-    def disconnect(self, close_code):
+    def disconnect(self):
         async_to_sync(self.channel_layer.group_discard)(
             self.group_name, self.channel_name)
 
