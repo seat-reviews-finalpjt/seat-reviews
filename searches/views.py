@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from articles.models import Article
 from articles.serializers import ArticleSerializer
 from .models import SearchHistory
+from .serializers import SearchHistorySerializer
 from rest_framework.permissions import IsAuthenticated
 import openai
 import os
