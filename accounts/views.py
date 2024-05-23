@@ -78,7 +78,7 @@ def kakaoMain(request):
     return render(request, 'kakaoMain.html', _context)
 
 def kakaoLoginLogic(request):
-    _restApiKey = '' # 입력필요
+    _restApiKey =  '' # 입력필요
     _redirectUrl = 'http://127.0.0.1:8000/accounts/kakaoLoginLogicRedirect'
     _url = f'https://kauth.kakao.com/oauth/authorize?client_id={_restApiKey}&redirect_uri={_redirectUrl}&response_type=code'
     return redirect(_url)
