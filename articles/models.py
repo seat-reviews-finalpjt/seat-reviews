@@ -14,6 +14,10 @@ class Article(models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def author_username(self):
+        return self.author.username
+
 
 class ArticlesLike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
