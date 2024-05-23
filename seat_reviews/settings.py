@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """
 Django settings for seat_reviews project.
 
@@ -13,6 +14,14 @@ import os,json
 from datetime import timedelta
 from pathlib import Path
 from django.core.exceptions import ImproperlyConfigured
+=======
+import os, json
+from datetime import timedelta
+from pathlib import Path
+from config import Config
+from django.core.exceptions import ImproperlyConfigured
+
+>>>>>>> c613b0c65bb02760129f6dd96f8d01f64fabdfee
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -137,13 +146,30 @@ def get_secret(setting):
 
 SECRET_KEY = get_secret("SECRET_KEY")
 
+secret_file = os.path.join(BASE_DIR, 'secret.json')
+
+with open(secret_file) as f:
+    secrets = json.loads(f.read())
+
+def get_secret(setting):
+    """비밀 변수를 가져오거나 명시적 예외를 반환한다."""
+    try:
+        return secrets[setting]
+    except KeyError:
+        error_msg = "Set the {} environment variable".format(setting)
+        raise ImproperlyConfigured(error_msg)
+
+
+SECRET_KEY = get_secret("SECRET_KEY")
+
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=360),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
+    'SIGNING_KEY': get_secret("SECRET_KEY"),  # 시크릿 키를 config 모듈에서 로드하여 할당
     'AUTH_HEADER_TYPES': ('Bearer',),
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
