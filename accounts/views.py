@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth import login
 from rest_framework import status
 from rest_framework.views import APIView
 from django.contrib.auth.hashers import check_password
@@ -7,9 +8,11 @@ from .serializers import UserSerializer
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenBlacklistView as OriginalTokenBlacklistView
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import AllowAny
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from .models import User
+import requests
 
 class UserJoinView(APIView):
     permission_classes = [AllowAny]
@@ -66,3 +69,70 @@ class TokenBlacklistView(OriginalTokenBlacklistView):
         if response.status_code == status.HTTP_200_OK:
             return Response({"message": "리플래쉬 토큰이 블랙리스트에 추가되었습니다."}, status=status.HTTP_205_RESET_CONTENT)
         return response
+    
+
+def kakaoMain(request):
+    _context = {'check':False}
+    if request.session.get('access_token'):
+        _context['check'] = True
+    return render(request, 'kakaoMain.html', _context)
+
+def kakaoLoginLogic(request):
+    _restApiKey = '' # 입력필요
+    _redirectUrl = 'http://127.0.0.1:8000/accounts/kakaoLoginLogicRedirect'
+    _url = f'https://kauth.kakao.com/oauth/authorize?client_id={_restApiKey}&redirect_uri={_redirectUrl}&response_type=code'
+    return redirect(_url)
+
+
+def kakaoLoginLogicRedirect(request):
+    _qs = request.GET.get('code')
+    _restApiKey = ''  # 입력 필요
+    _redirect_uri = 'http://127.0.0.1:8000/accounts/kakaoLoginLogicRedirect'
+    _url = f'https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={_restApiKey}&redirect_uri={_redirect_uri}&code={_qs}'
+    _res = requests.post(_url)
+    _result = _res.json()
+
+    # 세션에 토큰 저장
+    request.session['access_token'] = _result['access_token']
+    request.session.modified = True
+
+    # 사용자 정보 요청
+    user_info_url = 'https://kapi.kakao.com/v2/user/me'
+    headers = {'Authorization': f'Bearer {_result["access_token"]}'}
+    user_info_res = requests.get(user_info_url, headers=headers)
+    user_info = user_info_res.json()
+
+    # 사용자 정보 확인 및 Django 사용자 생성/업데이트
+    kakao_id = user_info.get('id')
+    properties = user_info.get('properties', {})
+    username = properties.get('nickname', f'User{kakao_id}')
+
+    try:
+        user = User.objects.get(username=kakao_id)
+    except User.DoesNotExist:
+        user = User.objects.create(username=kakao_id, nickname=username)
+
+    # 로그인 처리
+    login(request, user)
+
+    return redirect('http://127.0.0.1:8000/accounts/')
+
+
+
+def kakaoLogout(request):
+    _token = request.session['access_token']
+    _url = 'https://kapi.kakao.com/v1/user/logout'
+    _header = {
+      'Authorization': f'bearer {_token}'
+    }
+    # _url = 'https://kapi.kakao.com/v1/user/unlink'
+    # _header = {
+    #   'Authorization': f'bearer {_token}',
+    # }
+    _res = requests.post(_url, headers=_header)
+    _result = _res.json()
+    if _result.get('id'):
+        del request.session['access_token']
+        return render(request, 'loginoutSuccess.html')
+    else:
+        return render(request, 'logoutError.html')
