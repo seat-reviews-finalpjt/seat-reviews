@@ -115,7 +115,7 @@ def kakaoLoginLogicRedirect(request):
     # 로그인 처리
     login(request, user)
 
-    return redirect('http://127.0.0.1:8000/accounts/')
+    return render(request, 'loginSuccess.html')
 
 
 
