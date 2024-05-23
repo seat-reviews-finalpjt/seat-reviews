@@ -4,7 +4,7 @@ from articles.models import Article
 from articles.serializers import ArticleSerializer
 from .models import SearchHistory
 from .serializers import SearchHistorySerializer
-from transformers import pipeline
+# from transformers import pipeline
 from rest_framework.permissions import IsAuthenticated
 
 class SearchView(APIView):
