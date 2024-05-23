@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+import os
 from datetime import timedelta
 from pathlib import Path
 
@@ -178,3 +178,10 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# 미디어 파일에 대한 URL prefix
+MEDIA_URL = '/media/'
+
+# 미디어 파일이 저장될 디렉토리 경로
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

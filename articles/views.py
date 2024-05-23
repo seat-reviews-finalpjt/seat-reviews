@@ -16,13 +16,14 @@ class ArticleList(generics.ListCreateAPIView):
 
     def get_permissions(self):
         if self.request.method == 'POST':
-            # permissions.IsAuthenticated 테스트 해보려고 아무나 가능하도록 해놨음
-            self.permission_classes = [permissions.AllowAny]
+            self.permission_classes = [permissions.IsAuthenticated]  # 인증된 사용자만 POST 가능
         else:
-            self.permission_classes = [permissions.AllowAny]
+            self.permission_classes = [permissions.AllowAny]  # 모든 사용자 GET 가능
         return super().get_permissions()
 
     def perform_create(self, serializer):
+        if not self.request.user.is_authenticated:
+            raise ValueError("인증된 사용자만 게시글을 작성할 수 있습니다.")
         serializer.save(author=self.request.user)
 
 
