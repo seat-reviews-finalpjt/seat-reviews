@@ -4,17 +4,18 @@ from .models import Notification
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.shortcuts import render
+from accounts.models import User
 
 
 class CreateNotificationView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def create_notification(self, from_user, to_user, message):
+    def create_notification(self, from_user, user, message):
         notification = Notification.objects.create(
-            user=to_user, message=message)
+            user=user, message=message)
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(
-            f"notifications_{to_user.id}",
+            f"notifications_{user.id}",
             {
                 'type': 'send_notification',
                 'message': message
@@ -23,4 +24,5 @@ class CreateNotificationView(APIView):
 
 
 def notification_view(request):
-    return render(request, 'notification.html')
+    notifications = Notification.objects.filter(user=request.user)
+    return render(request, 'notification_list.html', {'notifications': notifications})

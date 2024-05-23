@@ -43,11 +43,12 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     'django_seed',
     'corsheaders',  # react
+
+    'notification',
     'accounts',
     'articles',
     'searches',
 
-    'notification',
     'channels',
 ]
 

@@ -84,7 +84,7 @@ class CommentListAPIView(APIView):
                 # 알림 생성
                 notification_view.create_notification(
                     from_user=request.user,
-                    to_user=parent_comment.commenter,
+                    user=parent_comment.commenter,
                     message=f'당신의 댓글에 새로운 댓글이 달렸습니다.: {comment.content}'
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -96,7 +96,7 @@ class CommentListAPIView(APIView):
                 # 알림 생성
                 notification_view.create_notification(
                     from_user=request.user,
-                    to_user=article.author,
+                    user=article.author,
                     message=f'당신의 글에 새로운 댓글이 달렸습니다.: {comment.content}'
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
