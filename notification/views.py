@@ -26,3 +26,10 @@ class CreateNotificationView(APIView):
 def notification_view(request):
     notifications = Notification.objects.filter(user=request.user)
     return render(request, 'notification_list.html', {'notifications': notifications})
+
+
+# def notification_view(request):
+#     context = {
+#         'user_id': request.user.id,
+#     }
+#     return render(request, 'notification_list.html', context)
