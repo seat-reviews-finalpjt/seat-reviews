@@ -1,3 +1,5 @@
+// Home.js
+
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
@@ -6,6 +8,7 @@ import './Home.css';
 function Home({ isLoggedIn }) {
     const [query, setQuery] = useState('');
     const [articles, setArticles] = useState([]);
+    const [theaters, setTheaters] = useState([]);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
@@ -17,21 +20,30 @@ function Home({ isLoggedIn }) {
         }
 
         const token = localStorage.getItem('token');
-        console.log('Using token:', token); // 토큰 확인용 로그
 
         try {
-            const response = await axios.get('http://localhost:8000/searches/', {
+            // 뮤지컬 검색
+            const musicalResponse = await axios.get('http://localhost:8000/searches/', {
                 params: { q: query },
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            if (response.data.articles.length === 0) {
+            if (musicalResponse.data.articles.length === 0) {
                 setError('해당 게시물은 존재하지 않습니다.');
                 setArticles([]);
             } else {
-                setArticles(response.data.articles);
+                setArticles(musicalResponse.data.articles);
                 setError(null);
             }
+
+            // 극장 검색
+            const theaterResponse = await axios.get('http://localhost:8000/searches/', {
+                params: { q: query, type: 'theater' },
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            setTheaters(theaterResponse.data.theaters);
+
         } catch (error) {
             if (error.response && error.response.status === 401) {
                 navigate('/login');
@@ -48,23 +60,17 @@ function Home({ isLoggedIn }) {
                 <nav>
                     <ul>
                         <li><Link to="/">홈</Link></li>
-                        {/* <li><Link to="/about">소개</Link></li>
-                        <li><Link to="/contact">연락처</Link></li> */}
                     </ul>
                 </nav>
             </header>
             <main>
-                <div className="banner">
-                    <h1>좋은 자리 알아봐에 오신걸 환영합니다</h1>
-                    <p>알아보고 싶은 좌석이 있는 장소를 검색하세요!</p>
-                </div>
                 <div className="search-section">
-                    <h3>장소 검색</h3>
+                    <h3>뮤지컬 및 극장 검색</h3>
                     <input
                         type="text"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
-                        placeholder="장소를 검색하세요"
+                        placeholder=" 검색하세요"
                     />
                     <button onClick={handleSearch}>검색</button>
                     {error && <p className="error">{error}</p>}
@@ -73,6 +79,12 @@ function Home({ isLoggedIn }) {
                             <div key={article.id} className="article">
                                 <h4>{article.title}</h4>
                                 <p>{article.content}</p>
+                            </div>
+                        ))}
+                        {theaters.map((theater) => (
+                            <div key={theater.id} className="theater">
+                                <h4>{theater.name}</h4>
+                                <p>{theater.address}</p>
                             </div>
                         ))}
                     </div>

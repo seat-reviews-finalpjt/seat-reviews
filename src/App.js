@@ -1,3 +1,4 @@
+// App.js
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Login from './Login';
@@ -5,6 +6,7 @@ import Home from './Home';
 import Logout from './Logout';
 import UserProfile from './UserProfile';
 import SignUp from './SignUp';
+import TheaterList from './TheaterList'; // 공연장 목록 컴포넌트 추가
 import './App.css';
 
 function App() {
@@ -36,13 +38,15 @@ function App() {
                 <nav className="navbar"> {/* 네비게이션 바에 클래스 추가 */}
                     <Link to="/" className="nav-logo">좋은 자리 알아봐</Link> {/* 홈로고에 클래스 추가 */}
                     <ul className="nav-menu"> {/* 네비게이션 메뉴에 클래스 추가 */}
+                        <li className="nav-item">
+                            <Link to="/theaters">공연장 목록</Link> {/* 공연장 목록 링크 추가 */}
+                        </li>
                         {isLoggedIn ? (
                             <>
                                 <li className="nav-item">
                                     <span>{username}님 안녕하세요</span>
                                 </li>
                                 <li className="nav-item">
-                                    {/* 로그아웃 버튼에 onClick 이벤트 추가 */}
                                     <Link to="/" onClick={handleLogout}>Logout</Link>
                                 </li>
                                 <li className="nav-item">
@@ -63,12 +67,11 @@ function App() {
                 </nav>
                 <Routes>
                     <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} />} />
-                    {/* Home 컴포넌트에 isLoggedIn 상태 전달 */}
                     <Route path="/" element={<Home isLoggedIn={isLoggedIn} />} />
-                    {/* Logout 컴포넌트에 setIsLoggedIn 함수 전달 */}
                     <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} />} />
                     <Route path="/profile/:username" element={<UserProfile />} />
                     <Route path="/signup" element={<SignUp />} />
+                    <Route path="/theaters" element={<TheaterList />} /> {/* 공연장 목록 라우트 추가 */}
                 </Routes>
             </div>
         </Router>
