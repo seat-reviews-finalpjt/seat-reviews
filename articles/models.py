@@ -50,3 +50,13 @@ class CommentLike(models.Model):
 
     class Meta:
         unique_together = ('user', 'comment')  # 중복 방지
+
+
+
+class Theater(models.Model):
+    name = models.CharField(max_length=255)
+    location = models.CharField(max_length=255, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name
