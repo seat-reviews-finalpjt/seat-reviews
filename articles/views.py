@@ -46,6 +46,13 @@ class ArticleLikeUnlike(generics.UpdateAPIView, generics.DestroyAPIView):
         user = request.user
         like, created = ArticlesLike.objects.get_or_create(
             user=user, article=article)
+        notification_view = CreateNotificationView()
+        # 알림 생성
+        notification_view.create_notification(
+            from_user=request.user,
+            user=article.author,
+            message=f'당신의 글에 좋아요가 달렸습니다.'
+        )
         if not created:
             return Response({"detail": "이미 좋아요 되어있는 게시물입니다."}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"detail": "좋아요 완료!"}, status=status.HTTP_200_OK)
@@ -148,6 +155,13 @@ class CommentLikeUnlikeAPIView(APIView):
             return Response({"error": "댓글이 존재하지 않습니다."})
 
         user = request.user
+        notification_view = CreateNotificationView()
+        # 알림 생성
+        notification_view.create_notification(
+            from_user=request.user,
+            user=comment.author,
+            message=f'당신의 댓글에 좋아요가 달렸습니다.'
+        )
 
         if CommentLike.objects.filter(user=user, comment=comment).exists():
             return Response({"error": "이미 좋아요 되어있는 게시물입니다."})
