@@ -24,7 +24,9 @@ function TheaterList() {
             <ul>
                 {theaters.map(theater => (
                     <li key={theater.id}>
-                        <Link to={`/theaters/${theater.id}`}>{theater.name}</Link>
+                        <Link to={`/theaters/${theater.id}`}>
+                            {theater.name}
+                        </Link>
                     </li>
                 ))}
             </ul>

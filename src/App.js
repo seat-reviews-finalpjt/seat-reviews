@@ -1,13 +1,14 @@
-// App.js
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link, useParams } from 'react-router-dom';
 import Login from './Login';
 import Home from './Home';
 import Logout from './Logout';
 import UserProfile from './UserProfile';
 import SignUp from './SignUp';
 import TheaterList from './TheaterList'; // 공연장 목록 컴포넌트 추가
+import SeatMap from './SeatMap'; // 좌석 배치도 추가
 import './App.css';
+
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -22,6 +23,7 @@ function App() {
             setIsLoggedIn(true);
         }
     }, []);
+
 
     // 로그아웃 함수
     const handleLogout = () => {
@@ -71,11 +73,18 @@ function App() {
                     <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} />} />
                     <Route path="/profile/:username" element={<UserProfile />} />
                     <Route path="/signup" element={<SignUp />} />
-                    <Route path="/theaters" element={<TheaterList />} /> {/* 공연장 목록 라우트 추가 */}
+                    <Route path="/theaters" element={<TheaterList />} />
+                    <Route path="/theaters/:theaterId" element={<SeatMapWrapper />} />
                 </Routes>
             </div>
         </Router>
     );
 }
+
+
+const SeatMapWrapper = () => {
+    const { theaterId } = useParams();
+    return <SeatMap selectedTheater={theaterId} />;
+};
 
 export default App;
