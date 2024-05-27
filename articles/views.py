@@ -1,8 +1,7 @@
-
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions, status, viewsets
 from rest_framework.response import Response
-from .models import Article, ArticlesLike, Comment, CommentLike
-from .serializers import ArticleSerializer, CommentSerializer
+from .models import Article, ArticlesLike, Comment, CommentLike, Theater, Seat
+from .serializers import ArticleSerializer, CommentSerializer, TheaterSerializer, SeatSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
@@ -152,3 +151,15 @@ class CommentLikeUnlikeAPIView(APIView):
         like = get_object_or_404(CommentLike, user=user, comment=comment)
         like.delete()
         return Response({"detail": "댓글 안좋아요 완료!"}, status=status.HTTP_204_NO_CONTENT)
+
+
+# TheaterViewSet 정의
+class TheaterViewSet(viewsets.ModelViewSet):
+    queryset = Theater.objects.all()
+    serializer_class = TheaterSerializer
+
+
+# SeatViewSet 정의
+class SeatViewSet(viewsets.ModelViewSet):
+    queryset = Seat.objects.all()
+    serializer_class = SeatSerializer

@@ -1,4 +1,4 @@
-from .models import Theater
+from .models import Theater, Seat
 from rest_framework import serializers, viewsets
 from rest_framework import serializers
 from .models import Article, Comment
@@ -33,3 +33,16 @@ class TheaterSerializer(serializers.ModelSerializer):
 class TheaterViewSet(viewsets.ModelViewSet):
     queryset = Theater.objects.all()
     serializer_class = TheaterSerializer
+
+
+class SeatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Seat
+        fields = ['id', 'row', 'number', 'x_position', 'y_position', 'is_available', 'width', 'height']
+
+class TheaterSerializer(serializers.ModelSerializer):
+    seats = SeatSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Theater
+        fields = ['id', 'name', 'location', 'description', 'seats']

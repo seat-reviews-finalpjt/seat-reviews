@@ -60,3 +60,17 @@ class Theater(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Seat(models.Model):
+    theater = models.ForeignKey(Theater, related_name='seats', on_delete=models.CASCADE)
+    row = models.CharField(max_length=10)
+    number = models.IntegerField()
+    x_position = models.FloatField()
+    y_position = models.FloatField()
+    is_available = models.BooleanField(default=True)
+    width = models.FloatField(default=20)
+    height = models.FloatField(default=20)
+
+    def __str__(self):
+        return f"{self.theater.name} - Row {self.row}, Seat {self.number}"
