@@ -1,0 +1,39 @@
+[
+    {
+        "model": "articles.theater",
+        "pk": 1,
+        "fields": {
+            "name": "CJ 아지트",
+            "location": "서울 마포구",
+            "description": "test"
+        }
+    },
+    {
+        "model": "articles.seat",
+        "pk": 1,
+        "fields": {
+            "theater": 1,
+            "row": "A",
+            "number": 1,
+            "x_position": 50,
+            "y_position": 50,
+            "is_available": true,
+            "width": 20,
+            "height": 20
+        }
+    },
+    {
+        "model": "articles.seat",
+        "pk": 2,
+        "fields": {
+            "theater": 1,
+            "row": "A",
+            "number": 2,
+            "x_position": 80,
+            "y_position": 50,
+            "is_available": true,
+            "width": 20,
+            "height": 20
+        }
+    }
+]

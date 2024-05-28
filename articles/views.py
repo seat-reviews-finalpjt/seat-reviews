@@ -1,12 +1,12 @@
-
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions, status, viewsets
 from rest_framework.response import Response
-from .models import Article, ArticlesLike, Comment, CommentLike
-from .serializers import ArticleSerializer, CommentSerializer
+from .models import Article, ArticlesLike, Comment, CommentLike, Theater, Seat
+from .serializers import ArticleSerializer, CommentSerializer, TheaterSerializer, SeatSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
 from .permissions import IsOwnerOrReadOnly
+from notification.views import CreateNotificationView
 
 
 # 게시글 작성 및 목록 조회
@@ -62,27 +62,44 @@ class ArticleLikeUnlike(generics.UpdateAPIView, generics.DestroyAPIView):
 # 댓글 작성 및 목록 조회
 class CommentListAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get(self, request, article_pk):
         comments = Comment.objects.filter(article=article_pk)
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
+
     def post(self, request, article_pk):
         parent_comment_id = request.data.get('parent_comment_id')
         serializer = CommentSerializer(data=request.data)
         article = get_object_or_404(Article, pk=article_pk)
+        notification_view = CreateNotificationView()  # 알림
+
         if parent_comment_id:  # 대댓글인 경우
             try:
                 parent_comment = Comment.objects.get(pk=parent_comment_id)
             except Comment.DoesNotExist:
                 return Response({"error": "상위 댓글이 존재하지 않습니다."}, status=status.HTTP_400_BAD_REQUEST)
             if serializer.is_valid():
-                serializer.save(commenter=request.user,
-                                parent_comment=parent_comment, article=article)
+                comment = serializer.save(
+                    commenter=request.user, parent_comment=parent_comment, article=article)
+                # 알림 생성
+                notification_view.create_notification(
+                    from_user=request.user,
+                    to_user=parent_comment.commenter,
+                    message=f'Your comment has a new reply: {comment.text}'
+                )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:  # 일반 댓글인 경우
             if serializer.is_valid():
-                serializer.save(commenter=request.user, article=article)
+                comment = serializer.save(
+                    commenter=request.user, article=article)
+                # 알림 생성
+                notification_view.create_notification(
+                    from_user=request.user,
+                    to_user=article.author,
+                    message=f'Your post has a new comment: {comment.text}'
+                )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -152,3 +169,24 @@ class CommentLikeUnlikeAPIView(APIView):
         like = get_object_or_404(CommentLike, user=user, comment=comment)
         like.delete()
         return Response({"detail": "댓글 안좋아요 완료!"}, status=status.HTTP_204_NO_CONTENT)
+
+
+def comment_view(request, article_id):
+
+    article = get_object_or_404(Article, pk=article_id)
+    comments = Comment.objects.filter(article=article)
+    context = {'article': article, 'comments': comments}
+
+    return render(request, 'comment.html', context)
+
+
+# TheaterViewSet 정의
+class TheaterViewSet(viewsets.ModelViewSet):
+    queryset = Theater.objects.all()
+    serializer_class = TheaterSerializer
+
+
+# SeatViewSet 정의
+class SeatViewSet(viewsets.ModelViewSet):
+    queryset = Seat.objects.all()
+    serializer_class = SeatSerializer
