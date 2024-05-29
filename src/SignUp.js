@@ -33,7 +33,7 @@ function SignUp() {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            window.alert('회원가입이 완료되었습니다.');
+            window.alert('회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.');
             setTimeout(() => {
                 navigate('/login');
             }, 2000); // 2초 후에 로그인 페이지로 이동
