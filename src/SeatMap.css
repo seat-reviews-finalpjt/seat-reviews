@@ -1,0 +1,27 @@
+.seat {
+    transition: fill 0.3s ease;
+    cursor: pointer;
+}
+
+.seat:hover {
+    fill: rgba(230, 0, 0, 0.8);
+}
+
+.seat-map-container {
+    position: relative;
+    width: 800px;
+    height: 600px;
+    margin: auto;
+}
+
+.seat-info {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: white;
+    border: 1px solid black;
+    padding: 20px;
+    border-radius: 5px;
+    z-index: 1100;
+}
+

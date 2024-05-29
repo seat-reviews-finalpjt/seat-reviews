@@ -25,7 +25,7 @@ function Login({ setIsLoggedIn, setUsername }) {
             navigate('/');
         } catch (error) {
             console.error('Login failed', error);
-            setError('아이디 또는 비밀번호를 잘못 입력했습니다.입력하신 내용을 다시 확인해주세요.');
+            setError('아이디 또는 비밀번호를 잘못 입력했습니다. 입력하신 내용을 다시 확인해주세요.');
         }
     };
 

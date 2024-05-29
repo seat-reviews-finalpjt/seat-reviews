@@ -30,15 +30,14 @@ function Logout({ setIsLoggedIn, setUsername }) {
                 // 로컬 스토리지에서 토큰 제거 및 상태 업데이트
                 localStorage.removeItem('token');
                 localStorage.removeItem('refresh_token'); // 리프레시 토큰 제거
+                localStorage.removeItem('username');
                 setIsLoggedIn(false);
                 setUsername('');
-                setMessage('Logout successful!');
-                setTimeout(() => {
-                    navigate('/');
-                }, 1000); // 1초 후에 메인 페이지로 이동
+                setMessage('로그아웃 되었습니다.');
+                navigate('/login');
             } catch (error) {
-                console.error('Failed to logout', error);
-                setMessage('Failed to logout.');
+                console.error('Logout failed', error);
+                setMessage('로그아웃 중 오류가 발생했습니다.');
             }
         };
 
@@ -47,8 +46,7 @@ function Logout({ setIsLoggedIn, setUsername }) {
 
     return (
         <div>
-            <h2>Logging out...</h2>
-            {message && <p>{message}</p>}
+            <p>{message}</p>
         </div>
     );
 }

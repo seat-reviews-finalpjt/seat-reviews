@@ -1,23 +1,33 @@
-// 각 좌석을 표시하는데 사용되고, 가용 여부에 따라 색상으로 표시
 import React from 'react';
 
-function Seat({ seat }) {
+function Seat({ seat, onClick }) {
     const seatStyle = {
-        fill: seat.is_available ? 'green' : 'red',
+        fill: seat.is_available ? 'rgb(180, 180, 180)' : 'rgb(230, 0, 0)',
         cursor: 'pointer',
     };
 
     return (
-        <rect
-            x={seat.x_position}
-            y={seat.y_position}
-            width={seat.width}
-            height={seat.height}
-            style={seatStyle}
-            onClick={() => alert(`Seat ${seat.row}${seat.number} clicked`)}
-        />
+        <>
+            <rect
+                x={seat.x_position}
+                y={seat.y_position}
+                width="30"
+                height="30"
+                style={seatStyle}
+                onClick={onClick}
+                className="seat"
+            />
+            <text
+                x={seat.x_position + 15}
+                y={seat.y_position + 20}
+                fill="black"
+                textAnchor="middle"
+                fontSize="14"
+            >
+                {seat.number}
+            </text>
+        </>
     );
 }
 
 export default Seat;
-
