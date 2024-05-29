@@ -64,13 +64,15 @@ function Home({ isLoggedIn }) {
             <main>
                 <div className="search-section">
                     <h3>뮤지컬 및 극장 검색</h3>
-                    <input
+                    <div className="search-input">
+                <input
                         type="text"
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         placeholder="검색하세요"
                     />
                     <button onClick={handleSearch}>검색</button>
+                </div>
                     {error && <p className="error">{error}</p>}
                     <div className="search-results">
                         {articles.map((article) => (

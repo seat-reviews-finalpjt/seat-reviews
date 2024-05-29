@@ -115,3 +115,23 @@ button:hover {
     font-size: 16px;
     color: #666;
 }
+
+.search-section {
+    text-align: center;
+}
+
+
+.search-input {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.search-input input[type="text"] {
+    margin-right: 10px;
+}
+
+.search-input button {
+    margin-left: 10px;
+}
