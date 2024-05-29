@@ -26,20 +26,20 @@ function SignUp() {
         if (profileImage) {
             formData.append('profile_image', profileImage);
         }
-
+    
         try {
             const response = await axios.post('http://localhost:8000/accounts/signup/', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            setMessage('Sign up successful!');
+            window.alert('회원가입이 완료되었습니다.');
             setTimeout(() => {
                 navigate('/login');
             }, 2000); // 2초 후에 로그인 페이지로 이동
         } catch (error) {
-            setMessage('Sign up failed. Please check your details.');
-            console.error('Sign up failed', error);
+            window.alert('회원가입 실패. 입력한 정보를 확인해주세요.');
+            console.error('회원가입 실패', error);
         }
     };
 
