@@ -54,3 +54,7 @@
 .user-profile-content button:hover {
     background-color: #cc0000;
 }
+
+.modal-content button {
+    margin-right: 10px;
+}
