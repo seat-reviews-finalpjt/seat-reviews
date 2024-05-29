@@ -5,6 +5,7 @@ import './TheaterList.css';
 
 function TheaterList() {
     const [theaters, setTheaters] = useState([]);
+    const [selectedTheater, setSelectedTheater] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -27,16 +28,25 @@ function TheaterList() {
         fetchTheaters();
     }, [navigate]);
 
+    const handleTheaterSelect = (e) => {
+        setSelectedTheater(e.target.value);
+        // 선택된 공연장에 대한 추가 작업을 수행할 수 있습니다.
+    };
+
     return (
         <div className="theater-list">
             <h2>공연장 목록</h2>
-            <ul>
-                {theaters.map((theater) => (
-                    <li key={theater.id}>
-                        <Link to={`/theaters/${theater.id}`}>{theater.name}</Link>
-                    </li>
-                ))}
-            </ul>
+            <div className="select-container">
+                <select value={selectedTheater} onChange={handleTheaterSelect}>
+                    <option value="">공연장 선택</option>
+                    {theaters.map((theater) => (
+                        <option key={theater.id} value={theater.id}>{theater.name}</option>
+                    ))}
+                </select>
+            </div>
+            {selectedTheater && (
+                <Link className="link" to={`/theaters/${selectedTheater}`}>선택한 공연장으로 이동</Link>
+            )}
         </div>
     );
 }

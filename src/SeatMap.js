@@ -37,9 +37,17 @@ function SeatMap({ selectedTheater }) {
         setSelectedSeat(null); // 모달을 닫을 때 선택된 좌석을 초기화합니다.
     };
 
+    const viewBoxWidth = 1000; // SVG viewBox 너비
+    const viewBoxHeight = 800; // SVG viewBox 높이
+
     return (
         <div className="seat-map-container">
-            <svg width="800" height="600" className="seat-map-svg">
+            <svg
+                width="100%"
+                height="100%"
+                viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
+                className="seat-map-svg"
+            >
                 {seats.map(seat => (
                     <Seat key={seat.id} seat={seat} onClick={() => handleSeatClick(seat)} />
                 ))}

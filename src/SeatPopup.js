@@ -37,7 +37,6 @@ function SeatPopup({ seat, onClose }) {
         }
     };
 
-
     const linkStyle = {
         display: 'block', // 블록 레벨로 변경
         marginTop: '10px',
