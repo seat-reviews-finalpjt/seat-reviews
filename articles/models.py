@@ -76,8 +76,6 @@ class Seat(models.Model):
     def __str__(self):
         return f"{self.theater.name} - Row {self.row}, Seat {self.number}"
 
-# 05.29 오전 회의 상황 반영 사용 / 확인 필요
-
 
 class Review(models.Model):
     SCORE_CHOICES = [
@@ -87,7 +85,7 @@ class Review(models.Model):
         (4, '4점'),
         (5, '5점'),
     ]
-    photo = models.ImageField(upload_to='photos/')
+    photo = models.ImageField(upload_to='photos/', blank=True, null=True)
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # User 모델 참조
     created_at = models.DateTimeField(auto_now_add=True)
@@ -102,7 +100,7 @@ class Review(models.Model):
 
 class ReviewLike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    review = models.ForeignKey(User, on_delete=models.CASCADE)
+    review = models.ForeignKey(Review, on_delete=models.CASCADE)
     liked_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

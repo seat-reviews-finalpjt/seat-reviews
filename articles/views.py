@@ -1,6 +1,6 @@
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.response import Response
-from .models import Theater, Seat, Review, ReviewLike
+from .models import Theater, Seat, Review
 from .serializers import TheaterSerializer, SeatSerializer, ReviewSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404, render
@@ -112,13 +112,14 @@ class ReviewDetailAPIView(APIView):
 
     def get(self, request, pk):
         review = self.get_object(pk)
-        serializer = ReviewDetailAPIView(review)
+        serializer = ReviewSerializer(review)
         return Response(serializer.data)
 
     def put(self, request, pk):
         review = self.get_object(pk)
         self.check_object_permissions(request, review)
-        serializer = ReviewSerializer(review, data=request.data)
+        serializer = ReviewSerializer(
+            review, data=request.data, partial=True)  # 부분 수정 가능
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

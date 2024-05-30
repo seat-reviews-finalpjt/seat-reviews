@@ -2,7 +2,7 @@ from django.urls import path
 from .views import TheaterViewSet, SeatViewSet, ReviewListAPIView, ReviewDetailAPIView
 
 urlpatterns = [
-    path('', ReviewListAPIView.as_view(), name='article-list'),
+    path('', ReviewListAPIView.as_view(), name='-list'),
     path('<int:pk>/', ReviewDetailAPIView.as_view(), name='article-detail'),
     #  path('<int:pk>/like/', ArticleLikeUnlike.as_view(),
     #      name='article-like-unlike'),
