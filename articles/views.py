@@ -1,6 +1,6 @@
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.response import Response
-from .models import Theater, Seat, Review
+from .models import Theater, Seat, Review, ReviewLike
 from .serializers import TheaterSerializer, SeatSerializer, ReviewSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404, render
@@ -101,7 +101,6 @@ class ReviewListAPIView(APIView):
 
 
 class ReviewDetailAPIView(APIView):
-
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def get_object(self, pk):
@@ -210,6 +209,35 @@ class ReviewDetailAPIView(APIView):
 
 
 # # 댓글 좋아요 기능
+
+class ReviewLikeUnlikeAPIView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def post(self, request, pk):
+        try:
+            review = Review.objects.get(pk=pk)
+        except Review.DoesNotExist:
+            return Response({"error": "리뷰가 존재하지 않습니다."})
+        user = request.user
+        # 알림 생성 필요
+        if ReviewLike.objects.filter(user=user, review=review).exists():
+            return Response({"error": "이미 좋아요 되어있는 리뷰입니다."})
+        like = ReviewLike(user=user, review=review)
+        like.save()
+
+        return Response({"message": "좋아요 완료!"})
+
+    def delete(self, request, pk):
+        try:
+            review = Review.objects.get(pk=pk)
+        except Review.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        user = request.user
+
+        like = get_object_or_404(ReviewLike, user=user, review=review)
+        like.delete()
+        return Response({"detail": "댓글 안좋아요 완료!"}, status=status.HTTP_204_NO_CONTENT)
 
 
 # class CommentLikeUnlikeAPIView(APIView):
