@@ -94,6 +94,7 @@ class Review(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     content = models.CharField(max_length=500)
     score = models.IntegerField(choices=SCORE_CHOICES)
+#   parent_comment = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='replies')
 
     def __str__(self):
         return self.content
