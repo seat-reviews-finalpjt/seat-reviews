@@ -75,14 +75,35 @@ class ReviewListAPIView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = ReviewSerializer(
-            data=request.data, context={'request': request})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
-
-        # 알림기능 방향 / 대댓글 기능 여부 확인
+        parent_review_id = request.data.get('parent_review')
+        serializer = ReviewSerializer(data=request.data)
+        # notification_view = CreateNotificationView()  # 알림
+        if parent_review_id:  # 대댓글인 경우
+            parent_review = get_object_or_404(Review, pk=parent_review_id)
+            if serializer.is_valid():
+                review = serializer.save(
+                    author=request.user, parent_review=parent_review)
+                # 알림 생성
+                # notification_view.create_notification(
+                #     from_user=request.user,
+                #     user=parent_comment.commenter,
+                #     message=f'당신의 댓글에 새로운 댓글이 달렸습니다.: {comment.content}'
+                # )
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:  # 일반 댓글인 경우
+            if serializer.is_valid():
+                review = serializer.save(author=request.user)
+                # 알림 생성
+                # notification_view.create_notification(
+                #     from_user=request.user,
+                #     user=article.author,
+                #     message=f'당신의 글에 새로운 댓글이 달렸습니다.: {comment.content}'
+                # )
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # class ReviewListAPIView(APIView):
