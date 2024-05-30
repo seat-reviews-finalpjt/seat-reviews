@@ -1,0 +1,57 @@
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notification Test</title>
+    <style>
+    </style>
+</head>
+<body>
+    <div id="notificationContainer">
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const notificationContainer = document.getElementById("notificationContainer");
+            const userId = "{{ user_id }}";
+
+            const notificationSocket = new WebSocket(
+                'ws://' + window.location.host + '/ws/notifications/' + userId + '/'
+            );
+            
+            notificationSocket.onmessage = function (event) {
+                const data = JSON.parse(event.data);
+                displayNotification(data.message);
+            };
+
+            notificationSocket.onclose = function (event) {
+                console.error('notification 서버 끊김');
+            };
+
+            function displayNotification(message) {
+                const notificationElement = document.createElement("div");
+                notificationElement.classList.add("notification");
+                notificationElement.innerText = message;
+                notificationContainer.appendChild(notificationElement);
+            }
+        });
+    </script>
+</body>
+</html> {% endcomment %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>알림 목록</h2>
+    <ul>
+    {% for notification in notifications %}
+        <li>{{ notification.message }}</li>
+    {% endfor %}
+    </ul>
+
+</body>
+</html>

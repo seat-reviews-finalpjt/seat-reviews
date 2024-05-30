@@ -9,24 +9,26 @@ import openai
 import os
 from dotenv import load_dotenv
 
+
 class SearchView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         query = request.GET.get('q', '')
-        
+
         # 데이터베이스에서 제목에 해당 쿼리가 포함된 Article 객체를 필터링
         articles = Article.objects.filter(title__icontains=query)
         serializer = ArticleSerializer(articles, many=True)
-        
+
         # 인증된 사용자인지 확인
         user = request.user
-        
+
         # 검색 기록을 데이터베이스에 저장
         search_history = SearchHistory(query=query, user=user)
         search_history.save()
-        
+
         return Response({'articles': serializer.data})
+
     
 load_dotenv()
     

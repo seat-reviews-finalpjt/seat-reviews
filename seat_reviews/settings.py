@@ -1,4 +1,6 @@
-import os, json
+
+import os
+import json
 from datetime import timedelta
 from pathlib import Path
 from config import Config
@@ -11,8 +13,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
-
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -35,9 +35,13 @@ INSTALLED_APPS = [
     'django_seed',
     'openai',
     'corsheaders',  # react
+
+    'notification',
     'accounts',
     'articles',
     'searches',
+
+    'channels',
 ]
 
 
@@ -89,8 +93,18 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = 'seat_reviews.asgi.application'  # channel 관련 추가
+
 WSGI_APPLICATION = 'seat_reviews.wsgi.application'
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}  # channel 관련 추가
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -103,7 +117,6 @@ DATABASES = {
 }
 
 AUTH_USER_MODEL = 'accounts.User'
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -111,22 +124,6 @@ REST_FRAMEWORK = {
 }
 
 REST_USE_JWT = True
-
-secret_file = os.path.join(BASE_DIR, 'secret.json')
-
-with open(secret_file) as f:
-    secrets = json.loads(f.read())
-
-def get_secret(setting):
-    """비밀 변수를 가져오거나 명시적 예외를 반환한다."""
-    try:
-        return secrets[setting]
-    except KeyError:
-        error_msg = "Set the {} environment variable".format(setting)
-        raise ImproperlyConfigured(error_msg)
-
-
-SECRET_KEY = get_secret("SECRET_KEY")
 
 secret_file = os.path.join(BASE_DIR, 'secret.json')
 
