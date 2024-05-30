@@ -9,6 +9,84 @@ from .permissions import IsOwnerOrReadOnly
 from notification.views import CreateNotificationView
 
 
+class ReviewListAPIView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get(self, request):
+        reviews = Review.objects.all()
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = ReviewSerializer(data=request.data)
+        if serializer.is_valid():
+            review = serializer.save(
+                author=request.user)
+            # 알림 생성 미구현
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ReviewDetailAPIView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+    def get_object(self, pk):
+        try:
+            return Review.objects.get(pk=pk)
+        except Review.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def get(self, request, pk):
+        review = self.get_object(pk)
+        serializer = ReviewSerializer(review)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        review = self.get_object(pk)
+        self.check_object_permissions(request, review)
+        serializer = ReviewSerializer(
+            review, data=request.data, partial=True)  # 부분 수정 가능
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        review = self.get_object(pk)
+        self.check_object_permissions(request, review)  # Check permissions
+        review.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ReviewLikeUnlikeAPIView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def post(self, request, pk):
+        try:
+            review = Review.objects.get(pk=pk)
+        except Review.DoesNotExist:
+            return Response({"error": "리뷰가 존재하지 않습니다."})
+        user = request.user
+        # 알림 생성 필요
+        if ReviewLike.objects.filter(user=user, review=review).exists():
+            return Response({"error": "이미 좋아요 되어있는 리뷰입니다."})
+        like = ReviewLike(user=user, review=review)
+        like.save()
+
+        return Response({"message": "리뷰 좋아요 완료!"})
+
+    def delete(self, request, pk):
+        try:
+            review = Review.objects.get(pk=pk)
+        except Review.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        user = request.user
+
+        like = get_object_or_404(ReviewLike, user=user, review=review)
+        like.delete()
+        return Response({"detail": "리뷰 안좋아요 완료!"}, status=status.HTTP_204_NO_CONTENT)
+
 # # 게시글 작성 및 목록 조회
 # class ArticleList(generics.ListCreateAPIView):
 #     queryset = Article.objects.all()
@@ -65,91 +143,6 @@ from notification.views import CreateNotificationView
 #         like = get_object_or_404(ArticlesLike, user=user, article=article)
 #         like.delete()
 #         return Response({"detail": "게시글 안좋아요 완료!"}, status=status.HTTP_204_NO_CONTENT)
-
-class ReviewListAPIView(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def get(self, request):
-        reviews = Review.objects.all()
-        serializer = ReviewSerializer(reviews, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        parent_review_id = request.data.get('parent_review')
-        serializer = ReviewSerializer(data=request.data)
-        # notification_view = CreateNotificationView()  # 알림
-        if parent_review_id:  # 대댓글인 경우
-            parent_review = get_object_or_404(Review, pk=parent_review_id)
-            if serializer.is_valid():
-                review = serializer.save(
-                    author=request.user, parent_review=parent_review)
-                # 알림 생성
-                # notification_view.create_notification(
-                #     from_user=request.user,
-                #     user=parent_comment.commenter,
-                #     message=f'당신의 댓글에 새로운 댓글이 달렸습니다.: {comment.content}'
-                # )
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            else:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:  # 일반 댓글인 경우
-            if serializer.is_valid():
-                review = serializer.save(author=request.user)
-                # 알림 생성
-                # notification_view.create_notification(
-                #     from_user=request.user,
-                #     user=article.author,
-                #     message=f'당신의 글에 새로운 댓글이 달렸습니다.: {comment.content}'
-                # )
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            else:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-# class ReviewListAPIView(APIView):
-#     permission_classes = [IsAuthenticatedOrReadOnly]
-
-#     def get(self, request, article_pk):
-#         comments = Review.objects.filter(article=article_pk)
-#         serializer = ReviewSerializer(comments, many=True)
-#         return Response(serializer.data)
-
-#     def post(self, request, article_pk):
-#         parent_comment_id = request.data.get('parent_comment_id')
-#         serializer = ReviewSerializer(data=request.data)
-#         # article = get_object_or_404(Article, pk=article_pk)
-#         notification_view = CreateNotificationView()  # 알림
-
-
-class ReviewDetailAPIView(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
-
-    def get_object(self, pk):
-        try:
-            return Review.objects.get(pk=pk)
-        except Review.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-    def get(self, request, pk):
-        review = self.get_object(pk)
-        serializer = ReviewSerializer(review)
-        return Response(serializer.data)
-
-    def put(self, request, pk):
-        review = self.get_object(pk)
-        self.check_object_permissions(request, review)
-        serializer = ReviewSerializer(
-            review, data=request.data, partial=True)  # 부분 수정 가능
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk):
-        review = self.get_object(pk)
-        self.check_object_permissions(request, review)  # Check permissions
-        review.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 # # 댓글 작성 및 목록 조회
@@ -227,38 +220,6 @@ class ReviewDetailAPIView(APIView):
 #         self.check_object_permissions(request, comment)  # Check permissions
 #         comment.delete()
 #         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-# # 댓글 좋아요 기능
-
-class ReviewLikeUnlikeAPIView(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def post(self, request, pk):
-        try:
-            review = Review.objects.get(pk=pk)
-        except Review.DoesNotExist:
-            return Response({"error": "리뷰가 존재하지 않습니다."})
-        user = request.user
-        # 알림 생성 필요
-        if ReviewLike.objects.filter(user=user, review=review).exists():
-            return Response({"error": "이미 좋아요 되어있는 리뷰입니다."})
-        like = ReviewLike(user=user, review=review)
-        like.save()
-
-        return Response({"message": "좋아요 완료!"})
-
-    def delete(self, request, pk):
-        try:
-            review = Review.objects.get(pk=pk)
-        except Review.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-        user = request.user
-
-        like = get_object_or_404(ReviewLike, user=user, review=review)
-        like.delete()
-        return Response({"detail": "댓글 안좋아요 완료!"}, status=status.HTTP_204_NO_CONTENT)
 
 
 # class CommentLikeUnlikeAPIView(APIView):

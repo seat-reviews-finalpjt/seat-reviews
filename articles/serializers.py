@@ -1,4 +1,4 @@
-from .models import Theater, Seat, Review
+from .models import Theater, Seat, Review, Comment
 from rest_framework import serializers, viewsets
 from rest_framework import serializers
 # from .models import Article, Comment,
@@ -10,17 +10,6 @@ from rest_framework import serializers
 #     class Meta:
 #         model = Article
 #         fields = ['id', 'title', 'photo', 'description', 'author_username', 'created_at']
-
-
-# class CommentSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Comment
-#         fields = ['id', 'article', 'commenter', 'content','created_at', 'updated_at', 'parent_comment']
-#         read_only_fields = ['commenter', 'article']
-
-#     def get_replies(self, obj):
-#         replies = Comment.objects.filter(parent_comment=obj)
-#         return CommentSerializer(replies, many=True).data
 
 
 class TheaterSerializer(serializers.ModelSerializer):
@@ -48,11 +37,21 @@ class TheaterSerializer(serializers.ModelSerializer):
         model = Theater
         fields = ['id', 'name', 'location', 'description', 'seats']
 
-# 05.29 오전 회의 상황 반영 사용 / 확인 필요
-
 
 class ReviewSerializer(serializers.ModelSerializer):
+    seat = serializers.PrimaryKeyRelatedField(read_only=True)
+    author = serializers.PrimaryKeyRelatedField(read_only=True)
+    score = serializers.ChoiceField(choices=Review.SCORE_CHOICES)
+
     class Meta:
         model = Review
-        fields = ['id', 'photo', 'author', 'content',
-                  'created_at', 'updated_at', 'score']
+        fields = ['id', 'seat', 'photo', 'author',
+                  'created_at', 'updated_at', 'content', 'score']
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ['id', 'review', 'commenter',
+                  'content', 'created_at', 'updated_at']
+        read_only_fields = ['commenter', 'review']
