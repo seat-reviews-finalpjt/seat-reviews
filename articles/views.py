@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
 from .permissions import IsReviewOwnerOrReadOnly, IsCommentOwnerOrReadOnly
 from notification.views import CreateNotificationView
+from django.http import Http404
 
 # 리뷰 CRUD
 
@@ -36,7 +37,7 @@ class ReviewDetailAPIView(APIView):
         try:
             return Review.objects.get(pk=pk)
         except Review.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            raise Http404
 
     def get(self, request, pk):
         review = self.get_object(pk)
@@ -121,7 +122,7 @@ class CommentDetailAPIView(APIView):
         try:
             return Comment.objects.get(pk=comment_pk)
         except Comment.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            raise Http404
 
     def get(self, request, review_pk, comment_pk):
         comment = self.get_object(review_pk, comment_pk)
@@ -149,7 +150,7 @@ class CommentDetailAPIView(APIView):
 class CommentLikeUnlikeAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    def post(self, request, comment_pk):
+    def post(self, request, comment_pk, review_pk):
         try:
             comment = Comment.objects.get(pk=comment_pk)
         except Comment.DoesNotExist:
@@ -167,7 +168,7 @@ class CommentLikeUnlikeAPIView(APIView):
 
         return Response({"message": "좋아요 완료!"})
 
-    def delete(self, request, comment_pk):
+    def delete(self, request, comment_pk, review_pk):
         try:
             comment = Comment.objects.get(pk=comment_pk)
         except Comment.DoesNotExist:
