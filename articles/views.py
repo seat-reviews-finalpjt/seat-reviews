@@ -37,10 +37,12 @@ class ReviewDetailAPIView(APIView):
         try:
             return Review.objects.get(pk=pk)
         except Review.DoesNotExist:
-            raise Http404
+            return None
 
     def get(self, request, pk):
         review = self.get_object(pk)
+        if review is None:
+            return Response([], status=status.HTTP_200_OK)
         serializer = ReviewSerializer(review)
         return Response(serializer.data)
 
@@ -122,10 +124,12 @@ class CommentDetailAPIView(APIView):
         try:
             return Comment.objects.get(pk=comment_pk)
         except Comment.DoesNotExist:
-            raise Http404
+            return None
 
     def get(self, request, review_pk, comment_pk):
         comment = self.get_object(review_pk, comment_pk)
+        if comment is None:
+            return Response([], status=status.HTTP_200_OK)
         serializer = CommentSerializer(comment)
         return Response(serializer.data)
 
