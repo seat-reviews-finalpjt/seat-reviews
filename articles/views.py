@@ -1,12 +1,14 @@
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.response import Response
-from .models import Theater, Seat, Review, ReviewLike
-from .serializers import TheaterSerializer, SeatSerializer, ReviewSerializer
+from .models import Theater, Seat, Review, ReviewLike, Comment, CommentLike
+from .serializers import TheaterSerializer, SeatSerializer, ReviewSerializer, CommentSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404, render
 from rest_framework.views import APIView
-from .permissions import IsOwnerOrReadOnly
+from .permissions import IsReviewOwnerOrReadOnly, IsCommentOwnerOrReadOnly
 from notification.views import CreateNotificationView
+
+# 리뷰 CRUD
 
 
 class ReviewListAPIView(APIView):
@@ -28,7 +30,7 @@ class ReviewListAPIView(APIView):
 
 
 class ReviewDetailAPIView(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsReviewOwnerOrReadOnly]
 
     def get_object(self, pk):
         try:
@@ -56,6 +58,8 @@ class ReviewDetailAPIView(APIView):
         self.check_object_permissions(request, review)  # Check permissions
         review.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+# 리뷰 좋아요
 
 
 class ReviewLikeUnlikeAPIView(APIView):
@@ -86,6 +90,107 @@ class ReviewLikeUnlikeAPIView(APIView):
         like = get_object_or_404(ReviewLike, user=user, review=review)
         like.delete()
         return Response({"detail": "리뷰 안좋아요 완료!"}, status=status.HTTP_204_NO_CONTENT)
+
+# 댓글 CRUD
+
+
+class CommentListAPIView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get(self, request, review_pk):
+        comments = Comment.objects.filter(review=review_pk)
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, review_pk):
+        serializer = CommentSerializer(data=request.data)
+        review = get_object_or_404(Review, pk=review_pk)
+        if serializer.is_valid():
+            comment = serializer.save(
+                commenter=request.user, review=review)
+            # 알림 생성 미구현
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CommentDetailAPIView(APIView):
+
+    permission_classes = [IsAuthenticatedOrReadOnly, IsCommentOwnerOrReadOnly]
+
+    def get_object(self, comment_pk, review_pk):
+        try:
+            return Comment.objects.get(pk=comment_pk)
+        except Comment.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def get(self, request, review_pk, comment_pk):
+        comment = self.get_object(review_pk, comment_pk)
+        serializer = CommentSerializer(comment)
+        return Response(serializer.data)
+
+    def put(self, request, review_pk, comment_pk):
+        comment = self.get_object(review_pk, comment_pk)
+        self.check_object_permissions(request, comment)
+        serializer = CommentSerializer(comment, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, review_pk, comment_pk):
+        comment = self.get_object(review_pk, comment_pk)
+        self.check_object_permissions(request, comment)
+        comment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+# 댓글 좋아요
+
+
+class CommentLikeUnlikeAPIView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def post(self, request, comment_pk):
+        try:
+            comment = Comment.objects.get(pk=comment_pk)
+        except Comment.DoesNotExist:
+            return Response({"error": "댓글이 존재하지 않습니다."})
+
+        user = request.user
+
+        # 알림 미 구현
+
+        if CommentLike.objects.filter(user=user, comment=comment).exists():
+            return Response({"error": "이미 좋아요 되어있는 댓글입니다."})
+
+        like = CommentLike(user=user, comment=comment)
+        like.save()
+
+        return Response({"message": "좋아요 완료!"})
+
+    def delete(self, request, comment_pk):
+        try:
+            comment = Comment.objects.get(pk=comment_pk)
+        except Comment.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        user = request.user
+
+        like = get_object_or_404(CommentLike, user=user, comment=comment)
+        like.delete()
+        return Response({"detail": "댓글 안좋아요 완료!"}, status=status.HTTP_204_NO_CONTENT)
+
+# TheaterViewSet 정의
+
+
+class TheaterViewSet(viewsets.ModelViewSet):
+    queryset = Theater.objects.all()
+    serializer_class = TheaterSerializer
+
+
+# SeatViewSet 정의
+class SeatViewSet(viewsets.ModelViewSet):
+    queryset = Seat.objects.all()
+    serializer_class = SeatSerializer
 
 # # 게시글 작성 및 목록 조회
 # class ArticleList(generics.ListCreateAPIView):
@@ -268,15 +373,3 @@ class ReviewLikeUnlikeAPIView(APIView):
 #     context = {'article': article, 'comments': comments}
 
 #     return render(request, 'comment.html', context)
-
-
-# TheaterViewSet 정의
-class TheaterViewSet(viewsets.ModelViewSet):
-    queryset = Theater.objects.all()
-    serializer_class = TheaterSerializer
-
-
-# SeatViewSet 정의
-class SeatViewSet(viewsets.ModelViewSet):
-    queryset = Seat.objects.all()
-    serializer_class = SeatSerializer
