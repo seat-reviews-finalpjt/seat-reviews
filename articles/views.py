@@ -35,10 +35,12 @@ class ReviewDetailAPIView(APIView):
         try:
             return Review.objects.get(pk=pk)
         except Review.DoesNotExist:
-            raise Http404
+            return None
 
     def get(self, request, pk):
         review = self.get_object(pk)
+        if review is None:
+            return Response([], status=status.HTTP_200_OK)
         serializer = ReviewSerializer(review)
         return Response(serializer.data)
 
@@ -70,7 +72,13 @@ class ReviewLikeUnlikeAPIView(APIView):
         except Review.DoesNotExist:
             return Response({"error": "리뷰가 존재하지 않습니다."})
         user = request.user
-        # 알림 생성 필요
+        notification_view = CreateNotificationView()
+        # 알림 생성
+        notification_view.create_notification(
+            from_user=request.user,
+            user=review.author,
+            message=f'당신의 리뷰에 좋아요가 달렸습니다.'
+        )
         if ReviewLike.objects.filter(user=user, review=review).exists():
             return Response({"error": "이미 좋아요 되어있는 리뷰입니다."})
         like = ReviewLike(user=user, review=review)
@@ -107,7 +115,13 @@ class CommentListAPIView(APIView):
         if serializer.is_valid():
             comment = serializer.save(
                 commenter=request.user, review=review)
-            # 알림 생성 미구현
+            notification_view = CreateNotificationView()
+            # 알림 생성
+            notification_view.create_notification(
+                from_user=request.user,
+                user=review.author,
+                message=f'당신의 리뷰에 댓글이 달렸습니다.'
+            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -120,10 +134,12 @@ class CommentDetailAPIView(APIView):
         try:
             return Comment.objects.get(pk=comment_pk)
         except Comment.DoesNotExist:
-            raise Http404
+            return None
 
     def get(self, request, review_pk, comment_pk):
         comment = self.get_object(review_pk, comment_pk)
+        if comment is None:
+            return Response([], status=status.HTTP_200_OK)
         serializer = CommentSerializer(comment)
         return Response(serializer.data)
 
@@ -155,8 +171,13 @@ class CommentLikeUnlikeAPIView(APIView):
             return Response({"error": "댓글이 존재하지 않습니다."})
 
         user = request.user
-
-        # 알림 미 구현
+        notification_view = CreateNotificationView()
+        # 알림 생성
+        notification_view.create_notification(
+            from_user=request.user,
+            user=comment.commenter,
+            message=f'당신의 댓글에 좋아요가 달렸습니다.'
+        )
 
         if CommentLike.objects.filter(user=user, comment=comment).exists():
             return Response({"error": "이미 좋아요 되어있는 댓글입니다."})
