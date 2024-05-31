@@ -30,7 +30,6 @@ function TheaterList() {
 
     const handleTheaterSelect = (e) => {
         setSelectedTheater(e.target.value);
-        // 선택된 공연장에 대한 추가 작업을 수행할 수 있습니다.
     };
 
     return (

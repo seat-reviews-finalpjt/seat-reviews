@@ -55,7 +55,6 @@ function SeatPopup({ seat, onClose }) {
             <div style={modalContentStyle}>
                 <span style={closeStyle} onClick={onClose}>×</span>
                 <h3>{`좌석 ${seat.row}${seat.number}`}</h3>
-                <p>{`리뷰: ${seat.reviewsCount !== undefined ? seat.reviewsCount : 0}`}</p>
                 <Link to={`/seats/${seat.id}/reviews`} style={linkStyle}>리뷰 보기</Link>
             </div>
         </div>

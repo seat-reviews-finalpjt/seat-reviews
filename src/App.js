@@ -6,7 +6,7 @@ import Logout from './Logout';
 import UserProfile from './UserProfile';
 import SignUp from './SignUp';
 import TheaterList from './TheaterList';
-import SeatMap from './SeatMap';
+import SeatMap from './SeatMap'; // SeatMap 컴포넌트 import 추가
 import './App.css';
 
 function App() {
@@ -69,6 +69,7 @@ function App() {
                     <Route path="/profile/:username" element={<UserProfile />} />
                     <Route path="/signup" element={<SignUp />} />
                     <Route path="/theaters" element={<TheaterList />} />
+                    {/* SeatMapWrapper 컴포넌트를 '/theaters/:theaterId' 경로에 매핑 */}
                     <Route path="/theaters/:theaterId" element={<SeatMapWrapper />} />
                 </Routes>
             </div>
@@ -76,9 +77,10 @@ function App() {
     );
 }
 
+// theaterId를 useParams를 통해 받아와서 SeatMap 컴포넌트에 전달하는 SeatMapWrapper 컴포넌트
 const SeatMapWrapper = () => {
     const { theaterId } = useParams();
-    return <SeatMap selectedTheater={theaterId} />;
+    return <SeatMap theaterId={theaterId} />;
 };
 
 export default App;

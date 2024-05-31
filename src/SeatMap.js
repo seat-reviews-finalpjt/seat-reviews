@@ -1,59 +1,53 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Seat from './Seat';
-import SeatPopup from './SeatPopup'; // 모달 컴포넌트를 import합니다.
 import './SeatMap.css';
 
-function SeatMap({ selectedTheater }) {
+function SeatMap({ theaterId }) {
     const [seats, setSeats] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [selectedSeat, setSelectedSeat] = useState(null); // 선택된 좌석을 상태로 관리합니다.
+    const [selectedSeat, setSelectedSeat] = useState(null);
 
     useEffect(() => {
         const fetchSeats = async () => {
-            if (selectedTheater) {
-                try {
-                    const response = await axios.get(`http://localhost:8000/articles/theaters/${selectedTheater}/`);
-                    setSeats(response.data);
-                    setLoading(false);
-                } catch (error) {
-                    console.error('Failed to fetch seats', error);
-                }
+            try {
+                const response = await axios.get(`http://localhost:8000/articles/theaters/${theaterId}/`);
+                setSeats(response.data);
+            } catch (error) {
+                console.error('Failed to fetch seats', error);
             }
         };
-
         fetchSeats();
-    }, [selectedTheater]);
-
-    if (loading) {
-        return <div>Loading...</div>;
-    }
+    }, [theaterId]);
 
     const handleSeatClick = (seat) => {
-        setSelectedSeat(seat); // 선택된 좌석을 설정합니다.
+        setSelectedSeat(seat);
     };
-
-    const handleCloseModal = () => {
-        setSelectedSeat(null); // 모달을 닫을 때 선택된 좌석을 초기화합니다.
-    };
-
-    const viewBoxWidth = 1000; // SVG viewBox 너비
-    const viewBoxHeight = 800; // SVG viewBox 높이
 
     return (
         <div className="seat-map-container">
-            <svg
-                width="100%"
-                height="100%"
-                viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
-                className="seat-map-svg"
-            >
-                {seats.map(seat => (
-                    <Seat key={seat.id} seat={seat} onClick={() => handleSeatClick(seat)} />
+            <div className="seat-map">
+                {seats.map((seat) => (
+                    <Seat key={seat.id} seat={seat} onSeatClick={handleSeatClick} />
                 ))}
-            </svg>
-            {/* 선택된 좌석이 있을 경우 모달을 렌더링합니다. */}
-            {selectedSeat && <SeatPopup seat={selectedSeat} onClose={handleCloseModal} />}
+            </div>
+            <div className="selected-seat-info">
+                {selectedSeat ? (
+                    <div>
+                        <h3>Selected Seat: {selectedSeat.row}{selectedSeat.number}</h3>
+                        <textarea placeholder="Write your review..." />
+                        <select>
+                            <option value={1}>1점</option>
+                            <option value={2}>2점</option>
+                            <option value={3}>3점</option>
+                            <option value={4}>4점</option>
+                            <option value={5}>5점</option>
+                        </select>
+                        <button>Submit Review</button>
+                    </div>
+                ) : (
+                    <div>No seat selected</div>
+                )}
+            </div>
         </div>
     );
 }

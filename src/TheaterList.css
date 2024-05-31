@@ -10,10 +10,13 @@ h2 {
 }
 
 .select-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%; /* 너비를 100%로 설정합니다. */
+    margin: 20px auto; /* 네브바와의 간격을 늘립니다. */
     position: relative;
-    display: inline-block;
-    width: 400px;
-    margin: 0 auto;
+    text-align: center;
 }
 
 .select-container::after {
@@ -30,7 +33,7 @@ h2 {
 }
 
 .select-container select {
-    width: 100%;
+    flex: 1; /* 선택 상자가 컨테이너의 너비를 채우도록 설정합니다. */
     padding: 10px;
     font-size: 16px;
     border: 2px solid #894394;
