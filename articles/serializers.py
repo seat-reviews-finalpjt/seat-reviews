@@ -24,25 +24,20 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 
-class TheaterSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Theater
-        fields = ['id', 'name', 'location', 'description']
-
-
-class TheaterViewSet(viewsets.ModelViewSet):
-    queryset = Theater.objects.all()
-    serializer_class = TheaterSerializer
-
-
 class SeatSerializer(serializers.ModelSerializer):
+    reviews = ArticleSerializer(many=True, read_only=True)
+
     class Meta:
         model = Seat
-        fields = ['id', 'row', 'number', 'x_position', 'y_position', 'is_available', 'width', 'height']
+        fields = '__all__'
+
+
 
 class TheaterSerializer(serializers.ModelSerializer):
     seats = SeatSerializer(many=True, read_only=True)
 
     class Meta:
         model = Theater
-        fields = ['id', 'name', 'location', 'description', 'seats']
+        fields = '__all__'
+
+

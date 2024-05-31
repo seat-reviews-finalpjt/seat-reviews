@@ -54,23 +54,19 @@ class CommentLike(models.Model):
 
 
 class Theater(models.Model):
-    name = models.CharField(max_length=255)
-    location = models.CharField(max_length=255, blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
+    name = models.CharField(max_length=100)
+    location = models.CharField(max_length=100)
+    description = models.TextField()
 
     def __str__(self):
         return self.name
 
 
 class Seat(models.Model):
-    theater = models.ForeignKey(Theater, related_name='seats', on_delete=models.CASCADE)
-    row = models.CharField(max_length=10)
+    theater = models.ForeignKey(Theater, on_delete=models.CASCADE, related_name='seats')
+    row = models.CharField(max_length=1)
     number = models.IntegerField()
-    x_position = models.FloatField()
-    y_position = models.FloatField()
-    is_available = models.BooleanField(default=True)
-    width = models.FloatField(default=20)
-    height = models.FloatField(default=20)
+    status = models.IntegerField(choices=[(0, 'Unavailable'), (1, 'Available'), (2, 'Limited')])
 
     def __str__(self):
-        return f"{self.theater.name} - Row {self.row}, Seat {self.number}"
+        return f'{self.row}{self.number}'

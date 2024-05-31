@@ -2,7 +2,7 @@ venv
 /media/
 /photos/
 /profile_images/
-secret.json
+/secret.json
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,django,database
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,django,database
