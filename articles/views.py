@@ -10,8 +10,6 @@ from notification.views import CreateNotificationView
 from django.http import Http404
 
 # 리뷰 CRUD
-
-
 class ReviewListAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
@@ -376,15 +374,6 @@ class SeatViewSet(viewsets.ModelViewSet):
 #     return render(request, 'comment.html', context)
 
 
-# TheaterViewSet 정의
-class TheaterViewSet(viewsets.ModelViewSet):
-    queryset = Theater.objects.all()
-    serializer_class = TheaterSerializer
 
-
-# SeatViewSet 정의
-class SeatViewSet(viewsets.ModelViewSet):
-    queryset = Seat.objects.all()
-    serializer_class = SeatSerializer
 
 

@@ -7,9 +7,9 @@ from rest_framework import serializers
 # class ArticleSerializer(serializers.ModelSerializer):
 #     author_username = serializers.ReadOnlyField(source='author.username')
 
-    class Meta:
-        model = Article
-        fields = ['id', 'title', 'photo', 'description', 'author_username', 'created_at']
+    # class Meta:
+    #     model = Article
+    #     fields = ['id', 'title', 'photo', 'description', 'author_username', 'created_at']
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -21,6 +21,17 @@ class CommentSerializer(serializers.ModelSerializer):
     def get_replies(self, obj):
         replies = Comment.objects.filter(parent_comment=obj)
         return CommentSerializer(replies, many=True).data
+
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    seat = serializers.PrimaryKeyRelatedField(read_only=True)
+    author = serializers.PrimaryKeyRelatedField(read_only=True)
+    score = serializers.ChoiceField(choices=Review.SCORE_CHOICES)
+
+    class Meta:
+        model = Review
+        fields = ['id', 'seat', 'photo', 'author','created_at', 'updated_at', 'content', 'score']
 
 
 
@@ -40,14 +51,6 @@ class TheaterSerializer(serializers.ModelSerializer):
         model = Theater
         fields = '__all__'
 
-class ReviewSerializer(serializers.ModelSerializer):
-    seat = serializers.PrimaryKeyRelatedField(read_only=True)
-    author = serializers.PrimaryKeyRelatedField(read_only=True)
-    score = serializers.ChoiceField(choices=Review.SCORE_CHOICES)
-
-    class Meta:
-        model = Review
-        fields = ['id', 'seat', 'photo', 'author','created_at', 'updated_at', 'content', 'score']
 
 
 class CommentSerializer(serializers.ModelSerializer):
