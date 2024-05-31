@@ -1,11 +1,11 @@
-from .models import Theater, Seat
+from .models import Theater, Seat, Review, Comment
 from rest_framework import serializers, viewsets
 from rest_framework import serializers
-from .models import Article, Comment
+# from .models import Article, Comment,
 
 
-class ArticleSerializer(serializers.ModelSerializer):
-    author_username = serializers.ReadOnlyField(source='author.username')
+# class ArticleSerializer(serializers.ModelSerializer):
+#     author_username = serializers.ReadOnlyField(source='author.username')
 
     class Meta:
         model = Article
@@ -25,7 +25,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class SeatSerializer(serializers.ModelSerializer):
-    reviews = ArticleSerializer(many=True, read_only=True)
+    reviews = ReviewSerializer(many=True, read_only=True)
 
     class Meta:
         model = Seat
@@ -40,4 +40,18 @@ class TheaterSerializer(serializers.ModelSerializer):
         model = Theater
         fields = '__all__'
 
+class ReviewSerializer(serializers.ModelSerializer):
+    seat = serializers.PrimaryKeyRelatedField(read_only=True)
+    author = serializers.PrimaryKeyRelatedField(read_only=True)
+    score = serializers.ChoiceField(choices=Review.SCORE_CHOICES)
 
+    class Meta:
+        model = Review
+        fields = ['id', 'seat', 'photo', 'author','created_at', 'updated_at', 'content', 'score']
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ['id', 'review', 'commenter', 'content', 'created_at', 'updated_at']
+        read_only_fields = ['commenter', 'review']
