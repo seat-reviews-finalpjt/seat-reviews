@@ -4,6 +4,8 @@ venv
 /profile_images/
 /secret.json
 
+/generate_seats.py
+
 # Created by https://www.toptal.com/developers/gitignore/api/python,django,database
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,django,database
 
