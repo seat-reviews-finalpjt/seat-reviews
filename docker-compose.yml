@@ -6,9 +6,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_DB: ${DB_NAME} #같은 폴더의 .env에서 DB_NAME 불러옴
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
 
   web:
     build: .
@@ -22,5 +24,13 @@ services:
     environment:
       DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
 
+  pgadmin: #웹 페이지에서 pgadmin를 볼 수 있게 이미지 설치
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+
 volumes:
-  postgres_data:
+  postgres_data: #PostgreSQL 데이터를 안전하게 보관하기 위해 별도 volumes로 관리
