@@ -27,7 +27,7 @@ services:
   pgadmin: #웹 페이지에서 pgadmin를 볼 수 있게 이미지 설치
     image: dpage/pgadmin4
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_EMAIL: admin@must.com
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
       - "5050:80"
