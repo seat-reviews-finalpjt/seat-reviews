@@ -13,7 +13,9 @@ services:
       - "5432:5432"
 
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     command: ["sh", "-c", "python manage.py migrate && gunicorn --bind 0.0.0.0:8000 seat_reviews.wsgi:application"]
     volumes:
       - .:/app
@@ -23,6 +25,15 @@ services:
       - db
     environment:
       DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+
+  frontend:
+    build:
+      context: ./react
+      dockerfile: dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - web
 
   pgadmin: #웹 페이지에서 pgadmin를 볼 수 있게 이미지 설치
     image: dpage/pgadmin4
