@@ -1,62 +1,95 @@
-# from rest_framework.views import APIView
-# from rest_framework.response import Response
-# from articles.models import Article
-# from articles.serializers import ArticleSerializer
-# from .models import SearchHistory
-# from .serializers import SearchHistorySerializer
-# from rest_framework.permissions import IsAuthenticated
-# import openai
-# import os
-# from dotenv import load_dotenv
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from articles.models import Theater, Review, Seat
+from .models import SearchHistory
+from .serializers import TheaterSerializer
+from rest_framework.permissions import IsAuthenticated
+from django.db.models import Count
+import openai
+import os
+from dotenv import load_dotenv
 
 
-# class SearchView(APIView):
-#     permission_classes = [IsAuthenticated]
+class SearchView(APIView):
+    permission_classes = [IsAuthenticated]
 
-#     def get(self, request):
-#         query = request.GET.get('q', '')
+    def get(self, request):
+        query = request.GET.get('q', '')
 
-#         # 데이터베이스에서 제목에 해당 쿼리가 포함된 Article 객체를 필터링
-#         articles = Article.objects.filter(title__icontains=query)
-#         serializer = ArticleSerializer(articles, many=True)
+        # 데이터베이스에서 name 또는 location에 해당 쿼리가 포함된 Theater 객체를 필터링
+        theaters = Theater.objects.filter(name__icontains=query) | Theater.objects.filter(location__icontains=query)
+        serializer = TheaterSerializer(theaters, many=True)
 
-#         # 인증된 사용자인지 확인
-#         user = request.user
+        # 인증된 사용자인지 확인
+        user = request.user
 
-#         # 검색 기록을 데이터베이스에 저장
-#         search_history = SearchHistory(query=query, user=user)
-#         search_history.save()
+        # 검색 기록을 데이터베이스에 저장
+        search_history = SearchHistory(query=query, user=user)
+        search_history.save()
 
-#         return Response({'articles': serializer.data})
+        return Response({'theaters': serializer.data})
 
 
-# load_dotenv()
+load_dotenv()
 
-# class RecommendView(APIView):
-#     permission_classes = [IsAuthenticated]
+class RecommendView(APIView):
+    permission_classes = [IsAuthenticated]
 
-#     def get(self, request):
-#         user = request.user
-#         search_histories = SearchHistory.objects.filter(user=user).order_by('-created_at')
-#         queries = [history.query for history in search_histories]
+    def get(self, request):
+        user = request.user
+        search_histories = SearchHistory.objects.filter(user=user).order_by('-created_at')
 
-#         # 최신 검색 기록을 기반으로 추천
-#         recent_queries = queries[:5]  # 최근 5개의 검색어만 사용
-#         combined_query = " ".join(recent_queries)
+        # 최근 검색한 극장 위치 5개 가져오기
+        recent_theaters = (search_histories
+                           .values('query')
+                           .annotate(count=Count('query'))
+                           .order_by('-count')[:5])
+        
+        if not recent_theaters:
+            return Response({"error": "최근 검색한 극장 위치가 없습니다."})
 
-#         # OpenAI API를 사용하여 영화 추천
-#         openai.api_key = os.getenv("OPENAI_API_KEY")
-#         messages = [
-#             {"role": "system", "content": "You are a helpful assistant."},
-#             {"role": "user", "content": f"사용자가 최근 검색한 영화 키워드는: {combined_query}. 유저의 성향을 한줄로 간략히 요약한 뒤, 이 유저가 좋아할만한 영화 제목만 3개 return해줘. return할 문장들은 총 150토큰을 넘으면 안돼."}
-#         ]
-#         response = openai.ChatCompletion.create(
-#             model="gpt-3.5-turbo",
-#             messages=messages,
-#             max_tokens=150
-#         )
+        # 검색 횟수가 가장 많은 극장 위치 선택
+        popular_theater_query = recent_theaters[0]['query']
+        theater = Theater.objects.filter(location__icontains=popular_theater_query).first()
+        
+        if not theater:
+            return Response({"error": "검색된 극장이 없습니다."})
 
-#         recommendations = response.choices[0].message['content'].strip().split("\n")
-#         recommended_movies = [{title.strip()} for title in recommendations if title.strip()]
+        # 선택된 극장의 좌석 중 평점이 높은 좌석 찾기
+        top_seat_reviews = (Review.objects
+                            .filter(seat__theater=theater)
+                            .values('seat', 'seat__row', 'seat__number', 'score')
+                            .annotate(avg_score=Count('score'))
+                            .order_by('-avg_score')[:5])
 
-#         return Response(recommended_movies)
+        seat_info_list = [
+            {
+                "seat": f"{seat['seat__row']}{seat['seat__number']}",
+                "score": seat['avg_score']
+            }
+            for seat in top_seat_reviews
+        ]
+
+        if not seat_info_list:
+            # 좌석 리뷰가 없을 경우 OpenAI에게 임의의 자리 추천을 요청
+            messages = [
+                {"role": "system", "content": "당신은 도움이 되는 어시스턴트입니다."},
+                {"role": "user", "content": f"사용자가 최근 검색한 극장 위치는 다음과 같습니다: {popular_theater_query}. 이 극장에서 추천할만한 좌석 하나를 알려주세요."}
+            ]
+        else:
+            # 좌석 리뷰가 있을 경우 OpenAI에게 최고 평점 좌석 추천을 요청
+            messages = [
+                {"role": "system", "content": "당신은 도움이 되는 어시스턴트입니다."},
+                {"role": "user", "content": f"사용자가 최근 검색한 극장 위치는 다음과 같습니다: {popular_theater_query}. 여기 해당 극장의 좌석들과 그들의 평점 정보입니다: {seat_info_list}. 이 좌석들 중에서 가장 좋은 좌석을 추천해주고, 짧은 설명을 덧붙여주세요."}
+            ]
+        
+        openai.api_key = os.getenv("OPENAI_API_KEY")
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=messages,
+            max_tokens=150
+        )
+
+        recommendation = response.choices[0].message['content'].strip()
+
+        return Response({"recommendation": recommendation})

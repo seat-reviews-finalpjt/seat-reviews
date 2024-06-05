@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import SearchHistory
+from articles.models import Theater
 
-class SearchHistorySerializer(serializers.ModelSerializer):
+class TheaterSerializer(serializers.ModelSerializer):
     class Meta:
-        model = SearchHistory
-        fields = '__all__'
+        model = Theater
+        fields = ['name', 'location', 'description']
