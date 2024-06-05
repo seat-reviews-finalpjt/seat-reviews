@@ -1,0 +1,18 @@
+# 베이스 이미지를 지정합니다.
+FROM node:14-alpine
+
+# 작업 디렉토리를 설정합니다.
+WORKDIR /app
+
+# package.json과 package-lock.json을 복사합니다.
+COPY package.json package-lock.json ./
+
+# 필요한 패키지들을 설치합니다.
+RUN npm install
+
+# 소스 파일들을 복사합니다.
+COPY ./src ./src
+COPY ./public ./public
+
+# 개발 서버를 실행합니다.
+CMD ["npm", "start"]
