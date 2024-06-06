@@ -5,13 +5,17 @@ venv
 /secret.json
 
 generate_seats.py
+theater_seats.json
+
+combine_seat.py
+theater_cheongho_seats.json
+theater_coex_seats.json
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,django,database
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,django,database
 
 ### Database ###
 *.accdb
-*.db
 *.dbf
 *.mdb
 *.pdb
@@ -25,7 +29,6 @@ generate_seats.py
 *.pyc
 __pycache__/
 local_settings.py
-db.sqlite3
 db.sqlite3-journal
 media
 

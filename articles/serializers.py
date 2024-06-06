@@ -5,7 +5,7 @@ from .models import Theater, Seat, Review, Comment
 
 class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.SerializerMethodField()
-    photo = serializers.SerializerMethodField()
+    photo = serializers.ImageField(required=True)  # 사진 필수
 
     class Meta:
         model = Review
@@ -17,8 +17,10 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     def get_photo(self, obj):
         request = self.context.get('request')
-        photo_url = obj.photo.url
-        return request.build_absolute_uri(photo_url)
+        if obj.photo and hasattr(obj.photo, 'url'):
+            photo_url = obj.photo.url
+            return request.build_absolute_uri(photo_url)
+        return None
 
 
 class CommentSerializer(serializers.ModelSerializer):

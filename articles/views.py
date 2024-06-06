@@ -23,7 +23,6 @@ class ReviewListAPIView(viewsets.ViewSet):
         if serializer.is_valid():
             serializer.save(author=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        print(serializer.errors)  # 서버 로그에 에러 출력
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
