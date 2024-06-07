@@ -10,7 +10,7 @@ function UserProfile() {
     const [password, setPassword] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [editMode, setEditMode] = useState(false);
-    const [profileData, setProfileData] = useState({ username: '', profile_image: '' });
+    const [profileData, setProfileData] = useState({ username: '', nickname: '', profile_image: '' });
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -29,7 +29,7 @@ function UserProfile() {
                     }
                 });
                 setUser(response.data);
-                setProfileData({ username: response.data.username, profile_image: response.data.profile_image });
+                setProfileData({ username: response.data.username, nickname: response.data.nickname, profile_image: response.data.profile_image });
             } catch (error) {
                 if (error.response && error.response.status === 401) {
                     setMessage('로그인이 필요합니다.');
@@ -64,6 +64,7 @@ function UserProfile() {
             });
             window.alert('회원 탈퇴가 완료되었습니다.');
             localStorage.removeItem('token');
+            localStorage.removeItem('kakaoToken');
             setTimeout(() => {
                 navigate('/');
             }, 2000);
@@ -107,6 +108,7 @@ function UserProfile() {
 
             const formData = new FormData();
             formData.append('username', profileData.username);
+            formData.append('nickname', profileData.nickname); // 닉네임 필드 추가
             if (profileData.profile_image instanceof File) {
                 formData.append('profile_image', profileData.profile_image);
             }
@@ -120,6 +122,8 @@ function UserProfile() {
             setUser(response.data);
             setEditMode(false);
             setMessage('프로필이 업데이트되었습니다.');
+            localStorage.setItem('nickname', profileData.nickname); // 닉네임 업데이트
+            document.cookie = `nickname=${encodeURIComponent(profileData.nickname)}; path=/; SameSite=None; Secure`; // 쿠키 업데이트
         } catch (error) {
             window.alert('프로필 업데이트 중 오류가 발생했습니다.');
             console.error('Failed to update profile', error);
@@ -145,6 +149,15 @@ function UserProfile() {
                                 />
                             </label>
                             <label>
+                                닉네임:
+                                <input
+                                    type="text"
+                                    name="nickname"
+                                    value={profileData.nickname}
+                                    onChange={handleProfileChange}
+                                />
+                            </label>
+                            <label>
                                 프로필 이미지:
                                 <input
                                     type="file"
@@ -158,10 +171,16 @@ function UserProfile() {
                     ) : (
                         <>
                             <p>아이디: {user.username}</p>
-                            {user.profile_image && (
+                            <p>닉네임: {user.nickname}</p>
+                            {user.profile_image ? (
                                 <>
                                     <p>프로필 이미지:</p>
                                     <img src={`http://localhost:8000${user.profile_image}`} alt="Profile" />
+                                </>
+                            ) : (
+                                <>
+                                    <p>프로필 이미지:</p>
+                                    <img src="http://localhost:8000/media/default_profile_image.png" alt="Profile" />
                                 </>
                             )}
                             <button onClick={handleEditClick}>프로필 수정</button>

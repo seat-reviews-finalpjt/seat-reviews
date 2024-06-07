@@ -13,16 +13,20 @@ import './App.css';
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [username, setUsername] = useState('');
+    const [nickname, setNickname] = useState('');
     const [authProvider, setAuthProvider] = useState('');
 
     useEffect(() => {
-        const token = getCookie('token');
+        const token = getCookie('jwt_token');
         const storedUsername = getCookie('username');
+        const storedNickname = decodeURIComponent(getCookie('nickname'));
         const storedAuthProvider = getCookie('auth_provider');
         if (token && storedUsername) {
             setUsername(storedUsername);
+            setNickname(storedNickname);
             setIsLoggedIn(true);
             setAuthProvider(storedAuthProvider);
+            localStorage.setItem('token', token);  // JWT 토큰을 로컬 스토리지에 저장
         }
     }, []);
 
@@ -49,26 +53,13 @@ function App() {
             localStorage.removeItem('token');
             localStorage.removeItem('refresh_token');
             localStorage.removeItem('username');
+            localStorage.removeItem('nickname');
             setIsLoggedIn(false);
             setUsername('');
+            setNickname('');
             setAuthProvider('');
             window.location.href = 'http://localhost:3000/';
         }
-    };
-
-    const SetCookies = () => {
-        const navigate = useNavigate();
-        useEffect(() => {
-            const token = getCookie('token');
-            const username = getCookie('username');
-            const authProvider = getCookie('auth_provider');
-            document.cookie = `username=${username}; path=/; SameSite=None; Secure`;
-            document.cookie = `auth_provider=${authProvider}; path=/; SameSite=None; Secure`;
-            document.cookie = `token=${token}; path=/; SameSite=None; Secure`;
-            navigate('/');
-        }, [navigate]);
-
-        return <div>쿠키를 설정하는 중...</div>;
     };
 
     return (
@@ -86,10 +77,10 @@ function App() {
                                     {authProvider === 'kakao' ? (
                                         <>
                                             <img src="/images/kakao_logo.png" alt="kakao logo" className="kakao-logo-small" />
-                                            <span>{username}님 안녕하세요</span>
+                                            <span>{nickname}님 안녕하세요</span>
                                         </>
                                     ) : (
-                                        <span>{username}님 안녕하세요</span>
+                                        <span>{nickname}님 안녕하세요</span>
                                     )}
                                 </li>
                                 <li className="nav-item">
@@ -113,14 +104,13 @@ function App() {
                 </nav>
                 <Routes>
                     <Route path="/" element={<Home isLoggedIn={isLoggedIn} />} />
-                    <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} />} />
-                    <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} />} />
+                    <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} setNickname={setNickname} />} />
+                    <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} setNickname={setNickname} />} />
                     <Route path="/profile/:username" element={<UserProfile />} />
                     <Route path="/signup" element={<SignUp />} />
                     <Route path="/theaters" element={<TheaterList />} />
                     <Route path="/theaters/:theaterId" element={<SeatMap />} />
                     <Route path="/theaters/:theaterId/seats/:seatId/reviews" element={<SeatReviews />} />
-                    <Route path="/setCookies" element={<SetCookies />} />
                 </Routes>
             </div>
         </Router>
