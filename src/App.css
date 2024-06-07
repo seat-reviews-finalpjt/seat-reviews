@@ -34,3 +34,10 @@
 .nav-item a:hover {
   text-decoration: underline;
 }
+
+.kakao-logo-small {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  vertical-align: middle;
+}

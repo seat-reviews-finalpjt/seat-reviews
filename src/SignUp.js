@@ -38,8 +38,8 @@ function SignUp() {
                 navigate('/login');
             }, 2000); // 2초 후에 로그인 페이지로 이동
         } catch (error) {
-            window.alert('회원가입 실패. 입력한 정보를 확인해주세요.');
-            console.error('회원가입 실패', error);
+            console.error('회원가입 실패', error.response.data);
+            setMessage('회원가입 실패. 입력한 정보를 확인해주세요.');
         }
     };
 
@@ -48,7 +48,7 @@ function SignUp() {
     };
 
     const messageStyle = {
-        color: message.includes('failed') ? 'red' : 'green',
+        color: message.includes('실패') ? 'red' : 'green',
         fontWeight: 'bold',
         margin: '10px 0',
     };
@@ -57,7 +57,7 @@ function SignUp() {
         <div className="signup-container">
             <h2>회원가입</h2>
             {message && <p style={messageStyle}>{message}</p>}
-            <form onSubmit={handleSubmit} className="signup-form">
+            <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>아이디</label>
                     <input 

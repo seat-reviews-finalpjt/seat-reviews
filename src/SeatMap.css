@@ -1,47 +1,141 @@
 .seat-map-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 50px;
-}
-
-.seat-map {
-    display: grid;
-    grid-template-columns: repeat(36, 40px); /* 열 수에 따라 조절 */
-    grid-auto-rows: 40px;
-    gap: 5px;
-}
-
-.seat {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid #ccc;
-    cursor: pointer;
-}
-
-.unavailable {
-    background-color: #ccc;
-}
-
-.available {
-    background-color: #90EE90;
-}
-
-.limited {
-    background-color: #FFD700;
-}
-
-.selected-seat-info {
-    margin-top: 20px;
-}
-
-.selected-seat-info > div {
-    display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.selected-seat-info > div > * {
-    margin: 5px;
+.screen {
+    width: 100%;
+    text-align: center;
+    margin: 20px 0;
+    font-size: 20px;
+    font-weight: bold;
+    border-bottom: 2px solid #000;
+}
+
+.seat-map {
+    position: relative;
+    width: 700px;
+    height: 500px;
+    margin: 20px 0;
+}
+
+.seat {
+    background-color: #ccc;
+    border: 1px solid #000;
+    border-radius: 5px;
+    padding: 5px;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.seat.available {
+    background-color: green;
+}
+
+.seat.unavailable {
+    background-color: red;
+}
+
+.seat.limited {
+    background-color: rgb(255, 0, 0);
+}
+
+.selected-seat-info {
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* 모달 스타일링 */
+.Modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    max-width: 80%;
+}
+
+.Overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-content h3 {
+    margin-bottom: 20px;
+}
+
+.modal-textarea {
+    width: 100%;
+    height: 100px;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: none; /* 사용자가 크기를 조정하지 못하도록 설정 */
+    box-sizing: border-box;
+}
+
+.star-rating {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.star {
+    font-size: 30px;
+    cursor: pointer;
+    color: #ccc; /* 비어있는 별 색상 */
+}
+
+.star.filled {
+    color: gold; /* 채워진 별 색상 */
+}
+
+input[type="file"] {
+    margin-bottom: 20px; /* 사진 업로드 필드와 아래 버튼 사이에 여백 추가 */
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px; /* 사진 업로드 필드와 버튼 사이에 간격 추가 */
+}
+
+.button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.button-submit {
+    background-color: #28a745;
+    color: white;
+}
+
+.button-cancel {
+    background-color: #dc3545;
+    color: white;
 }

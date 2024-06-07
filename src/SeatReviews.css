@@ -1,0 +1,57 @@
+.seat-reviews-container {
+    padding: 20px;
+}
+
+.seat-reviews-container h2 {
+    margin-bottom: 20px;
+}
+
+.seat-reviews-container .review {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+}
+
+.seat-reviews-container .review p {
+    margin: 5px 0;
+}
+
+.seat-reviews-container .review img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+    max-height: 300px; /* 이미지의 최대 높이를 300px로 설정 */
+    width: auto;
+    object-fit: cover; /* 이미지 비율을 유지하며 크기를 맞춤 */
+}
+
+.seat-reviews-container a {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.seat-reviews-container a:hover {
+    text-decoration: underline;
+}
+
+/* 별 모양 이모티콘 스타일 */
+.star-rating {
+    display: inline-flex;
+    align-items: center;
+}
+
+.star {
+    font-size: 1.2em;
+    margin-right: 2px;
+}
+
+.star.filled {
+    color: gold;
+}
+
+.star.empty {
+    color: #ccc;
+}

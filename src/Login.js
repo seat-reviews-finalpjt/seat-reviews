@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
@@ -9,6 +9,17 @@ function Login({ setIsLoggedIn, setUsername }) {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const fetchCSRFToken = async () => {
+            try {
+                await axios.get('http://localhost:8000/accounts/kakaoLoginLogic/');
+            } catch (error) {
+                console.error('Error fetching CSRF token', error);
+            }
+        };
+        fetchCSRFToken();
+    }, []);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -17,9 +28,9 @@ function Login({ setIsLoggedIn, setUsername }) {
                 password
             });
 
-            const { access, refresh } = response.data; // 서버에서 받은 액세스 및 리프레시 토큰
+            const { access, refresh } = response.data;
             localStorage.setItem('token', access);
-            localStorage.setItem('refresh_token', refresh); // 리프레시 토큰 저장
+            localStorage.setItem('refresh_token', refresh);
             setIsLoggedIn(true);
             setUsername(username);
             navigate('/');
@@ -29,20 +40,42 @@ function Login({ setIsLoggedIn, setUsername }) {
         }
     };
 
+    const handleKakaoLogin = () => {
+        window.location.href = 'http://localhost:8000/accounts/kakaoLoginLogic/';
+    };
+
     return (
         <div className="login-container">
             <form onSubmit={handleSubmit} className="login-form">
                 <h2>좋은 자리 알아봐</h2>
                 <div className="form-group">
-                    <label>아이디:</label>
-                    <input type="text" value={username} onChange={(e) => setUsernameInput(e.target.value)} />
+                    <label htmlFor="username">아이디:</label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        value={username}
+                        onChange={(e) => setUsernameInput(e.target.value)}
+                        autoComplete="username"
+                    />
                 </div>
                 <div className="form-group">
-                    <label>비밀번호:</label>
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <label htmlFor="password">비밀번호:</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        autoComplete="current-password"
+                    />
                 </div>
                 {error && <p className="error">{error}</p>}
                 <button type="submit" className="login-btn">로그인</button>
+                <button type="button" className="kakao-btn" onClick={handleKakaoLogin}>
+                    <img src="/images/kakao_logo.png" alt="kakao logo" className="kakao-logo" />
+                    카카오로 시작하기
+                </button>
             </form>
         </div>
     );
