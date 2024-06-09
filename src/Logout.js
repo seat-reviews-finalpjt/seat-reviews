@@ -2,32 +2,24 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-function Logout({ setIsLoggedIn, setUsername }) {
+function Logout({ setIsLoggedIn, setUsername, setNickname }) {
     const navigate = useNavigate();
     const [message, setMessage] = useState('');
 
     useEffect(() => {
         const logout = async () => {
             try {
-                const accessToken = localStorage.getItem('token');
-                const refreshToken = localStorage.getItem('refresh_token');
                 const authProvider = localStorage.getItem('auth_provider');
-
-                if (!accessToken || !refreshToken) {
-                    throw new Error('No token found');
-                }
-
                 if (authProvider === 'kakao') {
-                    // 카카오 로그아웃 처리
-                    if (window.Kakao && window.Kakao.Auth.getAccessToken()) {
-                        window.Kakao.Auth.logout(() => {
-                            console.log('카카오 로그아웃 성공');
-                        });
-                    }
                     window.location.href = 'http://localhost:8000/accounts/kakaoLogout/';
                 } else {
-                    // 일반 로그아웃 처리
-                    const response = await axios.post('http://localhost:8000/accounts/logout/', {
+                    const accessToken = localStorage.getItem('token');
+                    const refreshToken = localStorage.getItem('refresh_token');
+                    if (!accessToken || !refreshToken) {
+                        throw new Error('No token found');
+                    }
+                    
+                    await axios.post('http://localhost:8000/accounts/logout/', {
                         refresh: refreshToken
                     }, {
                         headers: {
@@ -38,8 +30,12 @@ function Logout({ setIsLoggedIn, setUsername }) {
                     localStorage.removeItem('token');
                     localStorage.removeItem('refresh_token');
                     localStorage.removeItem('username');
+                    localStorage.removeItem('nickname');
+                    localStorage.removeItem('auth_provider');
+                    deleteAllCookies();
                     setIsLoggedIn(false);
                     setUsername('');
+                    setNickname('');
                     setMessage('로그아웃 되었습니다.');
                     navigate('/');
                 }
@@ -50,7 +46,17 @@ function Logout({ setIsLoggedIn, setUsername }) {
         };
 
         logout();
-    }, [navigate, setIsLoggedIn, setUsername]);
+    }, [navigate, setIsLoggedIn, setUsername, setNickname]);
+
+    const deleteAllCookies = () => {
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i];
+            const eqPos = cookie.indexOf("=");
+            const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=localhost;SameSite=None;Secure";
+        }
+    };
 
     return (
         <div>

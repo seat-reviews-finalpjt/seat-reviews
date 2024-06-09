@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Login from './Login';
 import Home from './Home';
 import Logout from './Logout';
@@ -17,7 +17,7 @@ function App() {
     const [authProvider, setAuthProvider] = useState('');
 
     useEffect(() => {
-        const token = getCookie('jwt_token');
+        const token = getCookie('token');
         const storedUsername = getCookie('username');
         const storedNickname = decodeURIComponent(getCookie('nickname'));
         const storedAuthProvider = getCookie('auth_provider');
@@ -27,6 +27,9 @@ function App() {
             setIsLoggedIn(true);
             setAuthProvider(storedAuthProvider);
             localStorage.setItem('token', token);  // JWT 토큰을 로컬 스토리지에 저장
+            localStorage.setItem('username', storedUsername);
+            localStorage.setItem('nickname', storedNickname);
+            localStorage.setItem('auth_provider', storedAuthProvider);
         }
     }, []);
 
@@ -46,20 +49,7 @@ function App() {
     };
 
     const handleLogout = () => {
-        if (authProvider === 'kakao') {
-            window.location.href = 'http://localhost:8000/accounts/kakaoLogout/';
-        } else {
-            // 일반 로그아웃
-            localStorage.removeItem('token');
-            localStorage.removeItem('refresh_token');
-            localStorage.removeItem('username');
-            localStorage.removeItem('nickname');
-            setIsLoggedIn(false);
-            setUsername('');
-            setNickname('');
-            setAuthProvider('');
-            window.location.href = 'http://localhost:3000/';
-        }
+        window.location.href = 'http://localhost:3000/logout';
     };
 
     return (
@@ -106,7 +96,7 @@ function App() {
                     <Route path="/" element={<Home isLoggedIn={isLoggedIn} />} />
                     <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} setNickname={setNickname} />} />
                     <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} setNickname={setNickname} />} />
-                    <Route path="/profile/:username" element={<UserProfile />} />
+                    <Route path="/profile/:username" element={<UserProfile setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} setNickname={setNickname} setAuthProvider={setAuthProvider} />} />
                     <Route path="/signup" element={<SignUp />} />
                     <Route path="/theaters" element={<TheaterList />} />
                     <Route path="/theaters/:theaterId" element={<SeatMap />} />

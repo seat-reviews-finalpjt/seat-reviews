@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
-function Login({ setIsLoggedIn, setUsername }) {
+function Login({ setIsLoggedIn, setUsername, setNickname }) {
     const [username, setUsernameInput] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -33,6 +33,7 @@ function Login({ setIsLoggedIn, setUsername }) {
             localStorage.setItem('refresh_token', refresh);
             setIsLoggedIn(true);
             setUsername(username);
+            setNickname(username); // Assuming nickname is the same as username for simplicity
             navigate('/');
         } catch (error) {
             console.error('Login failed', error);

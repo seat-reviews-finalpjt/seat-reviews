@@ -3,14 +3,14 @@ import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import './UserProfile.css';
 
-function UserProfile() {
+function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider }) { // prop 추가
     const { username } = useParams();
     const [user, setUser] = useState(null);
     const [message, setMessage] = useState('');
-    const [password, setPassword] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [profileData, setProfileData] = useState({ username: '', nickname: '', profile_image: '' });
+    const [isKakaoUser, setIsKakaoUser] = useState(false); // 카카오 로그인 유저 여부 상태 추가
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -30,6 +30,7 @@ function UserProfile() {
                 });
                 setUser(response.data);
                 setProfileData({ username: response.data.username, nickname: response.data.nickname, profile_image: response.data.profile_image });
+                setIsKakaoUser(response.data.auth_provider === 'kakao'); // 카카오 로그인 유저 여부 설정
             } catch (error) {
                 if (error.response && error.response.status === 401) {
                     setMessage('로그인이 필요합니다.');
@@ -59,12 +60,15 @@ function UserProfile() {
             await axios.delete(`http://localhost:8000/accounts/${username}/`, {
                 headers: {
                     Authorization: `Bearer ${token}`
-                },
-                data: { password }
+                }
             });
             window.alert('회원 탈퇴가 완료되었습니다.');
             localStorage.removeItem('token');
             localStorage.removeItem('kakaoToken');
+            setIsLoggedIn(false);  // 로그인 상태 업데이트
+            setUsername('');
+            setNickname('');
+            setAuthProvider('');
             setTimeout(() => {
                 navigate('/');
             }, 2000);
@@ -73,7 +77,7 @@ function UserProfile() {
                 window.alert('로그인이 필요합니다.');
                 navigate('/login');
             } else {
-                window.alert('회원 탈퇴를 실패하였습니다. 비밀번호를 확인해주세요.');
+                window.alert('회원 탈퇴를 실패하였습니다.');
             }
             console.error('Failed to delete user', error);
         }
@@ -191,12 +195,7 @@ function UserProfile() {
                         <div className="modal">
                             <div className="modal-content">
                                 <h2>회원 탈퇴 확인</h2>
-                                <label>비밀번호 재확인</label>
-                                <input 
-                                    type="password" 
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)} 
-                                />
+                                <p>정말로 회원 탈퇴를 하시겠습니까?</p>
                                 <div>
                                     <button onClick={handleDeleteConfirm}>확인</button>
                                     <button onClick={() => setShowModal(false)}>취소</button>
