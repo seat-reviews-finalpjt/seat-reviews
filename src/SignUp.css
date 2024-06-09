@@ -1,6 +1,6 @@
 .signup-container {
     max-width: 400px;
-    margin: 0 auto;
+    margin: 40px auto;
     padding: 20px;
     background-color: #f9f9f9;
     border-radius: 5px;
@@ -70,4 +70,21 @@
 
 .message.error {
     color: red;
+}
+
+
+.kakao-signup-btn {
+    background-color: #FFEB00;
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+.kakao-signup-btn:hover {
+    background-color: #FFD700;
 }

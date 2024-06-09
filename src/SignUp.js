@@ -47,6 +47,10 @@ function SignUp() {
         setProfileImage(event.target.files[0]);
     };
 
+    const handleKakaoSignup = () => {
+        window.location.href = 'http://localhost:8000/accounts/kakaoLoginLogic';
+    };
+
     const messageStyle = {
         color: message.includes('실패') ? 'red' : 'green',
         fontWeight: 'bold',
@@ -55,7 +59,7 @@ function SignUp() {
 
     return (
         <div className="signup-container">
-            <h2>회원가입</h2>
+            <h2>회원 가입</h2>
             {message && <p style={messageStyle}>{message}</p>}
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
@@ -114,7 +118,10 @@ function SignUp() {
                         onChange={handleFileChange} 
                     />
                 </div>
-                <button type="submit" className="signup-btn">회원가입</button>
+                <button type="submit" className="signup-btn">회원 가입</button>
+                <button type="button" className="kakao-signup-btn" onClick={handleKakaoSignup}>
+                    카카오로 회원가입
+                </button>
             </form>
         </div>
     );
