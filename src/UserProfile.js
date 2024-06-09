@@ -3,14 +3,14 @@ import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import './UserProfile.css';
 
-function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider }) { // prop 추가
+function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider }) {
     const { username } = useParams();
     const [user, setUser] = useState(null);
     const [message, setMessage] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [profileData, setProfileData] = useState({ username: '', nickname: '', profile_image: '' });
-    const [isKakaoUser, setIsKakaoUser] = useState(false); // 카카오 로그인 유저 여부 상태 추가
+    const [isKakaoUser, setIsKakaoUser] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -30,7 +30,7 @@ function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider 
                 });
                 setUser(response.data);
                 setProfileData({ username: response.data.username, nickname: response.data.nickname, profile_image: response.data.profile_image });
-                setIsKakaoUser(response.data.auth_provider === 'kakao'); // 카카오 로그인 유저 여부 설정
+                setIsKakaoUser(response.data.auth_provider === 'kakao');
             } catch (error) {
                 if (error.response && error.response.status === 401) {
                     setMessage('로그인이 필요합니다.');
@@ -65,7 +65,7 @@ function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider 
             window.alert('회원 탈퇴가 완료되었습니다.');
             localStorage.removeItem('token');
             localStorage.removeItem('kakaoToken');
-            setIsLoggedIn(false);  // 로그인 상태 업데이트
+            setIsLoggedIn(false);
             setUsername('');
             setNickname('');
             setAuthProvider('');
@@ -112,7 +112,7 @@ function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider 
 
             const formData = new FormData();
             formData.append('username', profileData.username);
-            formData.append('nickname', profileData.nickname); // 닉네임 필드 추가
+            formData.append('nickname', profileData.nickname);
             if (profileData.profile_image instanceof File) {
                 formData.append('profile_image', profileData.profile_image);
             }
@@ -126,8 +126,8 @@ function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider 
             setUser(response.data);
             setEditMode(false);
             setMessage('프로필이 업데이트되었습니다.');
-            localStorage.setItem('nickname', profileData.nickname); // 닉네임 업데이트
-            document.cookie = `nickname=${encodeURIComponent(profileData.nickname)}; path=/; SameSite=None; Secure`; // 쿠키 업데이트
+            localStorage.setItem('nickname', profileData.nickname);
+            document.cookie = `nickname=${encodeURIComponent(profileData.nickname)}; path=/; SameSite=None; Secure`;
         } catch (error) {
             window.alert('프로필 업데이트 중 오류가 발생했습니다.');
             console.error('Failed to update profile', error);
@@ -169,8 +169,10 @@ function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider 
                                     onChange={handleProfileImageChange}
                                 />
                             </label>
-                            <button onClick={handleProfileSave}>저장</button>
-                            <button onClick={() => setEditMode(false)}>취소</button>
+                            <div className="button-group">
+                                <button onClick={handleProfileSave}>저장</button>
+                                <button onClick={() => setEditMode(false)}>취소</button>
+                            </div>
                         </>
                     ) : (
                         <>
@@ -178,17 +180,19 @@ function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider 
                             <p>닉네임: {user.nickname}</p>
                             {user.profile_image ? (
                                 <>
-                                    <p>프로필 이미지:</p>
+                                    <p>프로필 이미지</p>
                                     <img src={`http://localhost:8000${user.profile_image}`} alt="Profile" />
                                 </>
                             ) : (
                                 <>
-                                    <p>프로필 이미지:</p>
+                                    <p>프로필 이미지</p>
                                     <img src="http://localhost:8000/media/default_profile_image.png" alt="Profile" />
                                 </>
                             )}
-                            <button onClick={handleEditClick}>프로필 수정</button>
-                            <button onClick={handleDeleteClick}>회원 탈퇴</button>
+                            <div className="button-group">
+                                <button onClick={handleEditClick}>프로필 수정</button>
+                                <button onClick={handleDeleteClick}>회원 탈퇴</button>
+                            </div>
                         </>
                     )}
                     {showModal && (
@@ -196,7 +200,7 @@ function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider 
                             <div className="modal-content">
                                 <h2>회원 탈퇴 확인</h2>
                                 <p>정말로 회원 탈퇴를 하시겠습니까?</p>
-                                <div>
+                                <div className="button-group">
                                     <button onClick={handleDeleteConfirm}>확인</button>
                                     <button onClick={() => setShowModal(false)}>취소</button>
                                 </div>
