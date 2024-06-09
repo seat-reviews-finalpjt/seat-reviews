@@ -33,7 +33,6 @@
     border-radius: 4px;
 }
 
-
 .form-group select {
     appearance: none;
     padding: 10px 30px 10px 10px;
@@ -56,6 +55,7 @@
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
+    width: 100%;
 }
 
 .signup-btn:hover {
@@ -72,19 +72,26 @@
     color: red;
 }
 
-
 .kakao-signup-btn {
     background-color: #FFEB00;
     color: #000;
     border: none;
     border-radius: 6px;
-    padding: 12px 20px;
+    padding: 10px;
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
     margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
 }
 
 .kakao-signup-btn:hover {
     background-color: #FFD700;
+}
+
+.kakao-signup-btn img {
+    margin-right: 8px;
 }

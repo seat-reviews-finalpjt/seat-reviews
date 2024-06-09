@@ -119,9 +119,10 @@ function SignUp() {
                     />
                 </div>
                 <button type="submit" className="signup-btn">회원 가입</button>
-                <button type="button" className="kakao-signup-btn" onClick={handleKakaoSignup}>
-                    카카오로 회원가입
-                </button>
+                <button className="kakao-signup-btn" onClick={handleKakaoSignup}>
+                <img src="/images/kakao_logo.png" alt="Kakao Logo" width="20" height="20" />
+                카카오로 회원가입
+            </button>
             </form>
         </div>
     );
