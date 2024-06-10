@@ -15,15 +15,14 @@ class ReviewListAPIView(viewsets.ViewSet):
             reviews = Review.objects.filter(seat_id=seat_id)
         else:
             reviews = Review.objects.all()
-        serializer = ReviewSerializer(reviews, many=True)
+        serializer = ReviewSerializer(reviews, many=True, context={'request': request})
         return Response(serializer.data)
 
     def create(self, request):
-        serializer = ReviewSerializer(data=request.data)
+        serializer = ReviewSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save(author=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        print(serializer.errors)  # 서버 로그에 에러 출력
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -32,12 +31,12 @@ class ReviewDetailAPIView(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None):
         review = get_object_or_404(Review, pk=pk)
-        serializer = ReviewSerializer(review)
+        serializer = ReviewSerializer(review, context={'request': request})
         return Response(serializer.data)
 
     def update(self, request, pk=None):
         review = get_object_or_404(Review, pk=pk)
-        serializer = ReviewSerializer(review, data=request.data, partial=True)
+        serializer = ReviewSerializer(review, data=request.data, partial=True, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -64,6 +63,7 @@ class CommentListAPIView(viewsets.ViewSet):
             comment = serializer.save(commenter=request.user, review=review)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class CommentDetailAPIView(viewsets.ViewSet):
@@ -97,8 +97,8 @@ class SeatViewSet(viewsets.ViewSet):
     def list(self, request, pk=None):
         theater = get_object_or_404(Theater, pk=pk)
         seats = Seat.objects.filter(theater=theater)
-        theater_serializer = TheaterSerializer(theater)
-        seat_serializer = SeatSerializer(seats, many=True)
+        theater_serializer = TheaterSerializer(theater, context={'request': request})
+        seat_serializer = SeatSerializer(seats, many=True, context={'request': request})
         data = theater_serializer.data
         data['seats'] = seat_serializer.data
         return Response(data)

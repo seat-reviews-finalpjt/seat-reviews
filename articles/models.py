@@ -17,6 +17,7 @@ class Seat(models.Model):
     status = models.IntegerField(choices=[(0, 'Unavailable'), (1, 'Available'), (2, 'Limited')])
     x = models.IntegerField()
     y = models.IntegerField()
+    
 
     def __str__(self):
         return f'{self.row}{self.number}'

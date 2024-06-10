@@ -1,9 +1,11 @@
 from rest_framework import serializers
+from django.conf import settings
 from .models import Theater, Seat, Review, Comment
-from accounts.models import User
+
 
 class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.SerializerMethodField()
+    photo = serializers.ImageField(required=True)  # 사진 필수
 
     class Meta:
         model = Review
@@ -12,6 +14,14 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     def get_author(self, obj):
         return obj.author.nickname  # nickname을 반환
+
+    def get_photo(self, obj):
+        request = self.context.get('request')
+        if obj.photo and hasattr(obj.photo, 'url'):
+            photo_url = obj.photo.url
+            return request.build_absolute_uri(photo_url)
+        return None
+
 
 class CommentSerializer(serializers.ModelSerializer):
     commenter = serializers.SerializerMethodField()
@@ -30,7 +40,6 @@ class SeatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Seat
         fields = ['id', 'row', 'number', 'status', 'x', 'y', 'reviews']
-
 
 class TheaterSerializer(serializers.ModelSerializer):
     seats = SeatSerializer(many=True, read_only=True)
