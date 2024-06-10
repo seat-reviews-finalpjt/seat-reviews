@@ -5,7 +5,6 @@ venv
 /secret.json
 
 generate_seats.py
-theater_seats.json
 
 combine_seat.py
 theater_cheongho_seats.json
