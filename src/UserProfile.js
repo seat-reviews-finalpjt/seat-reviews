@@ -143,7 +143,7 @@ function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider 
                     {editMode ? (
                         <>
                             <label>
-                                아이디:
+                                아이디
                                 <input
                                     type="text"
                                     name="username"
@@ -153,7 +153,7 @@ function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider 
                                 />
                             </label>
                             <label>
-                                닉네임:
+                                닉네임
                                 <input
                                     type="text"
                                     name="nickname"
@@ -162,7 +162,7 @@ function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider 
                                 />
                             </label>
                             <label>
-                                프로필 이미지:
+                                프로필 이미지
                                 <input
                                     type="file"
                                     name="profile_image"
@@ -176,8 +176,8 @@ function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider 
                         </>
                     ) : (
                         <>
-                            <p>아이디: {user.username}</p>
-                            <p>닉네임: {user.nickname}</p>
+                            <p>아이디 : {user.username}</p>
+                            <p>닉네임 : {user.nickname}</p>
                             {user.profile_image ? (
                                 <>
                                     <p>프로필 이미지</p>
