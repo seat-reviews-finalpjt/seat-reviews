@@ -1,0 +1,47 @@
+.seat-map-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+}
+
+.seat-map {
+    display: grid;
+    grid-template-columns: repeat(36, 40px); /* 열 수에 따라 조절 */
+    grid-auto-rows: 40px;
+    gap: 5px;
+}
+
+.seat {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+.unavailable {
+    background-color: #ccc;
+}
+
+.available {
+    background-color: #90EE90;
+}
+
+.limited {
+    background-color: #FFD700;
+}
+
+.selected-seat-info {
+    margin-top: 20px;
+}
+
+.selected-seat-info > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.selected-seat-info > div > * {
+    margin: 5px;
+}
