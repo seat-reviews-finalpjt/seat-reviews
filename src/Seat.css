@@ -1,5 +1,4 @@
 .seat {
-    background-color: rgba(255, 255, 255, 0.8);
     border: 1px solid #ccc;
     border-radius: 50%;
     width: 30px;
@@ -13,21 +12,6 @@
 
 .seat:hover {
     transform: scale(1.1);
-}
-
-.seat.unavailable {
-    background-color: #d9534f; /* Red for unavailable seats */
-    color: #fff;
-}
-
-.seat.available {
-    background-color: #5cb85c; /* Green for available seats */
-    color: #fff;
-}
-
-.seat.limited {
-    background-color: #f0ad4e; /* Yellow for limited seats */
-    color: #fff;
 }
 
 .seat-label {

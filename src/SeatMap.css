@@ -50,19 +50,19 @@
     text-align: center;
 }
 
-/* 모달 스타일링 */
+/* 기본 모달 스타일 */
 .Modal {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background: white;
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     width: 400px;
-    max-width: 80%;
-    outline: none; /* 네모 박스를 제거하기 위해 추가 */
+    max-width: 90%;
+    box-shadow: none; /* 그림자 효과 제거 */
+    border: 1px solid #ccc; /* 경계선 추가 */
 }
 
 .Overlay {
@@ -72,6 +72,12 @@
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .modal-content h3 {
@@ -91,7 +97,7 @@
 
 .star-rating {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     margin-bottom: 20px;
 }
 
@@ -112,7 +118,7 @@ input[type="file"] {
 .modal-buttons {
     display: flex;
     justify-content: space-between;
-    margin-top: 20px; /* 사진 업로드 필드와 버튼 사이에 간격 추가 */
+    width: 100%;
 }
 
 .button {
@@ -130,5 +136,10 @@ input[type="file"] {
 
 .button-cancel {
     background-color: #dc3545;
+    color: white;
+}
+
+.button-view-reviews {
+    background-color: #007bff;
     color: white;
 }
