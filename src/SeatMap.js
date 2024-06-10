@@ -97,6 +97,7 @@ function SeatMap() {
             });
             console.log(response.data);  // 서버 응답 확인
             closeModal();
+            navigate(`/theaters/${theaterId}/seats/${selectedSeat.id}/reviews`);  // 리뷰 작성 후 리뷰 페이지로 이동
         } catch (error) {
             console.error('Failed to submit review', error);
         }
@@ -152,8 +153,8 @@ function SeatMap() {
                 overlayClassName="Overlay"
             >
                 {selectedSeat && (
-                    <div className="modal-content">
-                        <h3>선택한 좌석: {selectedSeat.row}{selectedSeat.number}</h3>
+                    <div>
+                        <h3>선택한 좌석 : {selectedSeat.row}{selectedSeat.number}</h3>
                         <textarea 
                             placeholder="리뷰를 작성해주세요" 
                             className="modal-textarea"

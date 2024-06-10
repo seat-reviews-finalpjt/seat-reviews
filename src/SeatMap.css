@@ -55,9 +55,6 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    right: auto;
-    bottom: auto;
-    margin-right: -50%;
     transform: translate(-50%, -50%);
     background: white;
     border-radius: 8px;
@@ -65,6 +62,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     width: 400px;
     max-width: 80%;
+    outline: none; /* 네모 박스를 제거하기 위해 추가 */
 }
 
 .Overlay {
@@ -74,11 +72,6 @@
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
-}
-
-.modal-content {
-    display: flex;
-    flex-direction: column;
 }
 
 .modal-content h3 {

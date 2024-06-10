@@ -47,7 +47,7 @@ function SeatReviews() {
 
     return (
         <div className="seat-reviews-container">
-            <h2>선택한 좌석 : {seatId}</h2>
+            {/* <h2>선택한 좌석 : {seatId}</h2> */}
             <Link to={`/theaters/${theaterId}`} className="back-button">공연장 돌아가기</Link>
             {seatReviews.length > 0 ? (
                 seatReviews.map((review) => (
