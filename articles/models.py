@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.db.models import Avg
 
 class Theater(models.Model):
     name = models.CharField(max_length=100)
@@ -18,9 +19,15 @@ class Seat(models.Model):
     x = models.IntegerField()
     y = models.IntegerField()
     
-
     def __str__(self):
         return f'{self.row}{self.number}'
+    
+    @property
+    def average_score(self):
+        reviews = Review.objects.filter(seat=self)
+        if reviews.exists():
+            return reviews.aggregate(Avg('score'))['score__avg']
+        return 0  # 리뷰가 없으면 0을 반환
 
 
 class Review(models.Model):

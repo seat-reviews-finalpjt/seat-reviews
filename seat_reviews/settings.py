@@ -5,6 +5,7 @@ from datetime import timedelta
 from pathlib import Path
 from django.core.exceptions import ImproperlyConfigured
 from corsheaders.defaults import default_headers
+from config import NAVER_MAPS_CLIENT_ID, NAVER_MAPS_CLIENT_SECRET
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -18,6 +19,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
+    'corsheaders',  # react
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -29,7 +31,6 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     'django_seed',
     'openai',
-    'corsheaders',  # react
     'notification',
     'accounts',
     'articles',
@@ -127,7 +128,7 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'ALGORITHM': 'HS256',
-    'SIGNING_KEY': get_secret("SECRET_KEY"),
+    'SIGNING_KEY': SECRET_KEY,
     'AUTH_HEADER_TYPES': ('Bearer',),
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
@@ -165,19 +166,36 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
+    'http://127.0.0.1:3000',
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
 ]
+
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+]
+
 
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'X-CSRFToken',
+    'Authorization',
 ]
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_SAMESITE = 'None'
+
+CSRF_COOKIE_DOMAIN = 'localhost'
+SESSION_COOKIE_DOMAIN = 'localhost'
+
+
+# 네이버지도 API
+NAVER_MAPS_CLIENT_ID = NAVER_MAPS_CLIENT_ID
+NAVER_MAPS_CLIENT_SECRET = NAVER_MAPS_CLIENT_SECRET
