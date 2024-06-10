@@ -23,17 +23,15 @@ function App() {
         const storedUsername = getCookie('username');
         const storedNickname = decodeURIComponent(getCookie('nickname'));
         const storedAuthProvider = getCookie('auth_provider');
-        const storedUserId = getCookie('user_id');
         if (token && storedUsername) {
             setUsername(storedUsername);
             setNickname(storedNickname);
             setIsLoggedIn(true);
             setAuthProvider(storedAuthProvider);
-            localStorage.setItem('token', token);
+            localStorage.setItem('token', token);  // JWT 토큰을 로컬 스토리지에 저장
             localStorage.setItem('username', storedUsername);
             localStorage.setItem('nickname', storedNickname);
             localStorage.setItem('auth_provider', storedAuthProvider);
-            localStorage.setItem('userId', storedUserId);
         }
     }, []);
 

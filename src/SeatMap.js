@@ -190,7 +190,7 @@
                 >
                     <div className="modal-content">
                     <h2>좌석 색상 정보</h2>
-                        <p>좌석의 색상은 다음과 같은 기준에 따라 따릅니다</p>
+                        <p>좌석의 색상은 다음과 같은 기준에 따릅니다</p>
                         <p style={{ color: '#5cb85c' }}>평균 별점 4점 이상</p>
                         <p style={{ color: '#f0ad4e' }}>평균 별점 3점 이상</p>
                         <p style={{ color: '#d9534f' }}>평균 별점 3점 미만</p>

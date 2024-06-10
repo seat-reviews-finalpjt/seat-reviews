@@ -31,6 +31,17 @@ function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider 
                 setUser(response.data);
                 setProfileData({ username: response.data.username, nickname: response.data.nickname, profile_image: response.data.profile_image });
                 setIsKakaoUser(response.data.auth_provider === 'kakao');
+
+                // 로그인 상태 업데이트
+                if (response.data.username) {
+                    setUsername(response.data.username);
+                    setNickname(response.data.nickname);
+                    setIsLoggedIn(true);
+                    setAuthProvider(response.data.auth_provider);
+                    localStorage.setItem('username', response.data.username);
+                    localStorage.setItem('nickname', response.data.nickname);
+                    localStorage.setItem('auth_provider', response.data.auth_provider);
+                }
             } catch (error) {
                 if (error.response && error.response.status === 401) {
                     setMessage('로그인이 필요합니다.');
@@ -43,7 +54,7 @@ function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider 
         };
 
         fetchUserProfile();
-    }, [username, navigate]);
+    }, [username, navigate, setIsLoggedIn, setUsername, setNickname, setAuthProvider]);
 
     const handleDeleteClick = () => {
         setShowModal(true);
