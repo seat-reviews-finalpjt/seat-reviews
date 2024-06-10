@@ -163,11 +163,11 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000',
+    'http://localhost:3000', 'http://localhost:5050', 'http://localhost:8000'
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+    "http://localhost:3000", 'http://localhost:5050', 'http://localhost:8000'
 ]
 
 CORS_ALLOW_CREDENTIALS = True
