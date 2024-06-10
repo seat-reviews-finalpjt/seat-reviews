@@ -9,6 +9,8 @@ import TheaterList from './TheaterList';
 import SeatMap from './SeatMap';
 import SeatReviews from './SeatReviews';
 import './App.css';
+import { NotificationProvider } from './NotificationContext';
+import NotificationContainer from './NotificationContainer';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -21,15 +23,17 @@ function App() {
         const storedUsername = getCookie('username');
         const storedNickname = decodeURIComponent(getCookie('nickname'));
         const storedAuthProvider = getCookie('auth_provider');
+        const storedUserId = getCookie('user_id');
         if (token && storedUsername) {
             setUsername(storedUsername);
             setNickname(storedNickname);
             setIsLoggedIn(true);
             setAuthProvider(storedAuthProvider);
-            localStorage.setItem('token', token);  // JWT 토큰을 로컬 스토리지에 저장
+            localStorage.setItem('token', token);
             localStorage.setItem('username', storedUsername);
             localStorage.setItem('nickname', storedNickname);
             localStorage.setItem('auth_provider', storedAuthProvider);
+            localStorage.setItem('userId', storedUserId);
         }
     }, []);
 
@@ -53,57 +57,60 @@ function App() {
     };
 
     return (
-        <Router>
-            <div>
-                <nav className="navbar">
-                    <Link to="/" className="nav-logo">좋은 자리 알아봐</Link>
-                    <ul className="nav-menu">
-                        <li className="nav-item">
-                            <Link to="/theaters">공연장 목록</Link>
-                        </li>
-                        {isLoggedIn ? (
-                            <>
-                                <li className="nav-item">
-                                    {authProvider === 'kakao' ? (
-                                        <>
-                                            <img src="/images/kakao_logo.png" alt="kakao logo" className="kakao-logo-small" />
+        <NotificationProvider>
+            <Router>
+                <div>
+                    <nav className="navbar">
+                        <Link to="/" className="nav-logo">좋은 자리 알아봐</Link>
+                        <ul className="nav-menu">
+                            <li className="nav-item">
+                                <Link to="/theaters">공연장 목록</Link>
+                            </li>
+                            {isLoggedIn ? (
+                                <>
+                                    <li className="nav-item">
+                                        {authProvider === 'kakao' ? (
+                                            <>
+                                                <img src="/images/kakao_logo.png" alt="kakao logo" className="kakao-logo-small" />
+                                                <span>{nickname}님 안녕하세요</span>
+                                            </>
+                                        ) : (
                                             <span>{nickname}님 안녕하세요</span>
-                                        </>
-                                    ) : (
-                                        <span>{nickname}님 안녕하세요</span>
-                                    )}
-                                </li>
-                                <li className="nav-item">
-                                    <Link to="/" onClick={handleLogout}>Logout</Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link to={`/profile/${username}`}>Profile</Link>
-                                </li>
-                            </>
-                        ) : (
-                            <>
-                                <li className="nav-item">
-                                    <Link to="/login">Login</Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link to="/signup">Sign Up</Link>
-                                </li>
-                            </>
-                        )}
-                    </ul>
-                </nav>
-                <Routes>
-                    <Route path="/" element={<Home isLoggedIn={isLoggedIn} />} />
-                    <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} setNickname={setNickname} />} />
-                    <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} setNickname={setNickname} />} />
-                    <Route path="/profile/:username" element={<UserProfile setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} setNickname={setNickname} setAuthProvider={setAuthProvider} />} />
-                    <Route path="/signup" element={<SignUp />} />
-                    <Route path="/theaters" element={<TheaterList />} />
-                    <Route path="/theaters/:theaterId" element={<SeatMap />} />
-                    <Route path="/theaters/:theaterId/seats/:seatId/reviews" element={<SeatReviews />} />
-                </Routes>
-            </div>
-        </Router>
+                                        )}
+                                    </li>
+                                    <li className="nav-item">
+                                        <Link to="/" onClick={handleLogout}>Logout</Link>
+                                    </li>
+                                    <li className="nav-item">
+                                        <Link to={`/profile/${username}`}>Profile</Link>
+                                    </li>
+                                </>
+                            ) : (
+                                <>
+                                    <li className="nav-item">
+                                        <Link to="/login">Login</Link>
+                                    </li>
+                                    <li className="nav-item">
+                                        <Link to="/signup">Sign Up</Link>
+                                    </li>
+                                </>
+                            )}
+                        </ul>
+                    </nav>
+                    <NotificationContainer />
+                    <Routes>
+                        <Route path="/" element={<Home isLoggedIn={isLoggedIn} />} />
+                        <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} setNickname={setNickname} />} />
+                        <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} setNickname={setNickname} />} />
+                        <Route path="/profile/:username" element={<UserProfile setIsLoggedIn={setIsLoggedIn} setUsername={setUsername} setNickname={setNickname} setAuthProvider={setAuthProvider} />} />
+                        <Route path="/signup" element={<SignUp />} />
+                        <Route path="/theaters" element={<TheaterList />} />
+                        <Route path="/theaters/:theaterId" element={<SeatMap />} />
+                        <Route path="/theaters/:theaterId/seats/:seatId/reviews" element={<SeatReviews />} />
+                    </Routes>
+                </div>
+            </Router>
+        </NotificationProvider>
     );
 }
 
