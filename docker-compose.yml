@@ -16,6 +16,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      # 기존 데이터베이스 불러오기
     command: ["sh", "-c",
       "python manage.py makemigrations &&
       python manage.py migrate &&
