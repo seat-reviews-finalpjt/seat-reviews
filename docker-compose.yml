@@ -18,6 +18,14 @@ services:
       dockerfile: Dockerfile
     command: >
       sh -c "
+      # 데이터베이스가 준비될 때까지 대기
+      while ! nc -z db 5432;
+      do
+        echo 'Waiting for the database to be ready...';
+        sleep 1;
+      done;
+      # 데이터베이스 준비 완료 후 명령 실행
+      python manage.py makemigrations &&
       python manage.py migrate &&
       python manage.py loaddata seatdata.json &&
       gunicorn --bind 0.0.0.0:8000 seat_reviews.wsgi:application
