@@ -54,12 +54,13 @@
 }
 
 .seat-reviews-container .profile-image {
-    width: 30px;
-    height: 30px;
+    width: 60px !important;
+    height: 60px !important;
     border-radius: 50%;
     margin-right: 10px;
     object-fit: cover;
 }
+
 
 .seat-reviews-container .review-header p {
     font-size: 16px; /* 닉네임 글씨 크기 조정 */
@@ -258,7 +259,6 @@
 
 
 
-/* 추가된 CSS 스타일 */
 .review-header-info {
     display: flex;
     justify-content: space-between;
@@ -289,14 +289,14 @@
 
 /* 리뷰 섹션 스타일 */
 .review {
-    position: relative; /* 새로운 스타일 추가 */
+    position: relative;
 }
 
-/* 리뷰 액션 버튼을 오른쪽으로 정렬 */
+
 .review-actions {
-    position: absolute; /* 새로운 스타일 추가 */
-    top: 10px; /* 적절한 위치 조정을 위해 추가 */
-    right: 10px; /* 오른쪽으로 정렬 */
+    position: absolute;
+    top: 10px;
+    right: 10px;
     display: flex;
     gap: 8px;
 }

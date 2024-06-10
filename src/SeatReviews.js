@@ -159,6 +159,19 @@ function ReviewWithComments({ review, renderStars, currentUser }) {
         }
     };
 
+    const handleLikeReview = async () => {
+        try {
+            await axios.post(`http://localhost:8000/articles/reviews/${review.id}/like/`, {}, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            window.location.reload();
+        } catch (error) {
+            console.error('Failed to like review', error);
+        }
+    };
+
     const handleCommentEditToggle = (commentId) => {
         setComments(comments.map(comment =>
             comment.id === commentId ? { ...comment, isEditing: !comment.isEditing, originalContent: comment.content } : comment
@@ -195,6 +208,19 @@ function ReviewWithComments({ review, renderStars, currentUser }) {
             setComments(comments.filter(comment => comment.id !== commentId));
         } catch (error) {
             console.error('Failed to delete comment', error);
+        }
+    };
+
+    const handleCommentLike = async (commentId) => {
+        try {
+            await axios.post(`http://localhost:8000/articles/reviews/${review.id}/comments/${commentId}/like/`, {}, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            window.location.reload();
+        } catch (error) {
+            console.error('Failed to like comment', error);
         }
     };
 
@@ -252,6 +278,11 @@ function ReviewWithComments({ review, renderStars, currentUser }) {
                         <p>{review.content}</p>
                         <p>{renderStars(review.score)}</p>
                         {review.photo && <img src={review.photo} alt="Review" />}
+                        <div className="like-section">
+                            <button className="like-button" onClick={handleLikeReview}>
+                                {review.is_liked ? '❤️' : '🤍'} {review.likes_count}
+                            </button>
+                        </div>
                     </>
                 )}
             </div>
@@ -286,6 +317,11 @@ function ReviewWithComments({ review, renderStars, currentUser }) {
                                         <button onClick={() => handleCommentDelete(comment.id)}>삭제</button>
                                     </div>
                                 )}
+                                <div className="like-section">
+                                    <button className="like-button" onClick={() => handleCommentLike(comment.id)}>
+                                        {comment.is_liked ? '❤️' : '🤍'} {comment.likes_count}
+                                    </button>
+                                </div>
                             </div>
                         ))}
                     </div>
