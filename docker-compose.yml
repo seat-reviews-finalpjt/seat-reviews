@@ -16,7 +16,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: ["sh", "-c", "python manage.py migrate && gunicorn --bind 0.0.0.0:8000 seat_reviews.wsgi:application"]
+    command: ["sh", "-c", "python manage.py migrate && python manage.py loaddata theater_seats.json && gunicorn --bind 0.0.0.0:8000 seat_reviews.wsgi:application"]
     volumes:
       - .:/app
     ports:
