@@ -5,6 +5,7 @@ from .models import SearchHistory
 from .serializers import TheaterSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count
+from django.shortcuts import get_object_or_404
 import openai
 import os
 from dotenv import load_dotenv
@@ -20,16 +21,24 @@ class SearchView(APIView):
         theaters = Theater.objects.filter(name__icontains=query) | Theater.objects.filter(location__icontains=query)
         serializer = TheaterSerializer(theaters, many=True)
 
-        # 인증된 사용자인지 확인
-        user = request.user
-
-        # 검색 기록을 데이터베이스에 저장
-        search_history = SearchHistory(query=query, user=user)
-        search_history.save()
-
         return Response({'theaters': serializer.data})
 
+class RecordClickView(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def post(self, request, theater_id):
+        # 사용자가 선택한 극장을 검색
+        theater = get_object_or_404(Theater, id=theater_id)
+
+        # 인증된 사용자 정보 가져오기
+        user = request.user
+
+        # 검색 기록에 저장
+        search_history = SearchHistory(query=theater.name, user=user, theater=theater)
+        search_history.save()
+
+        return Response({'message': '검색 기록이 잘 저장되었습니다'})
+    
 load_dotenv()
 
 class RecommendView(APIView):
