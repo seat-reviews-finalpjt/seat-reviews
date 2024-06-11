@@ -45,6 +45,7 @@ class Review(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     content = models.CharField(max_length=500)
     score = models.IntegerField(choices=SCORE_CHOICES)
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='review_likes', blank=True)
 
     def __str__(self):
         return self.content
@@ -56,6 +57,7 @@ class Comment(models.Model):
     commenter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='comment_likes', blank=True)
 
     def __str__(self):
         return self.content
