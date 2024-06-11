@@ -5,6 +5,9 @@ FROM python:3.10-slim
 # 작업 디렉토리를 설정합니다.
 WORKDIR /app
 
+# git 설치를 실행합니다 
+RUN apt-get update && apt-get install -y git
+
 # 필요 라이브러리 파일을 복사합니다.
 COPY requirements.txt /app/
 
