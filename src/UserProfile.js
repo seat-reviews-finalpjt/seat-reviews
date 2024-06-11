@@ -29,7 +29,11 @@ function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider 
                     }
                 });
                 setUser(response.data);
-                setProfileData({ username: response.data.username, nickname: response.data.nickname, profile_image: response.data.profile_image });
+                setProfileData({
+                    username: response.data.username,
+                    nickname: response.data.nickname,
+                    profile_image: response.data.profile_image
+                });
                 setIsKakaoUser(response.data.auth_provider === 'kakao');
 
                 // 로그인 상태 업데이트
@@ -189,7 +193,12 @@ function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider 
                         <>
                             <p>아이디 : {user.username}</p>
                             <p>닉네임 : {user.nickname}</p>
-                            {user.profile_image ? (
+                            {isKakaoUser ? (
+                                <>
+                                    <p>프로필 이미지</p>
+                                    <img src="/images/kakao_logo.png" alt="Kakao Profile" className="kakao-logo" />
+                                </>
+                            ) : user.profile_image ? (
                                 <>
                                     <p>프로필 이미지</p>
                                     <img src={`http://localhost:8000${user.profile_image}`} alt="Profile" />
