@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
+import axios from './api';
 
 function Login({ setIsLoggedIn, setUsername, setNickname }) {
     const [username, setUsernameInput] = useState('');
@@ -12,7 +13,7 @@ function Login({ setIsLoggedIn, setUsername, setNickname }) {
     useEffect(() => {
         const fetchCSRFToken = async () => {
             try {
-                await axios.get('http://localhost:8000/accounts/kakaoLoginLogic/');
+                await axios.get('/accounts/kakaoLoginLogic/');
             } catch (error) {
                 console.error('Error fetching CSRF token', error);
             }
@@ -23,7 +24,7 @@ function Login({ setIsLoggedIn, setUsername, setNickname }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:8000/accounts/login/', {
+            const response = await axios.post('/accounts/login/', {
                 username,
                 password
             });
@@ -42,7 +43,7 @@ function Login({ setIsLoggedIn, setUsername, setNickname }) {
     };
 
     const handleKakaoLogin = () => {
-        window.location.href = 'http://localhost:8000/accounts/kakaoLoginLogic/';
+        window.location.href = '/accounts/kakaoLoginLogic/';
     };
 
     return (

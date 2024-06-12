@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './SignUp.css';
+import axios from './api';
 
 function SignUp() {
     const [username, setUsername] = useState('');
@@ -28,7 +29,7 @@ function SignUp() {
         }
     
         try {
-            const response = await axios.post('http://localhost:8000/accounts/signup/', formData, {
+            const response = await axios.post('/accounts/signup/', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -48,7 +49,7 @@ function SignUp() {
     };
 
     const handleKakaoSignup = () => {
-        window.location.href = 'http://localhost:8000/accounts/kakaoLoginLogic';
+        window.location.href = '/accounts/kakaoLoginLogic';
     };
 
     const messageStyle = {

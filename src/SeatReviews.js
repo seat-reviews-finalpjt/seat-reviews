@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import './SeatReviews.css';
+import axios from './api';
 
 function renderStars(score) {
     const filledStars = Array(score).fill('★');
@@ -27,7 +28,7 @@ function SeatReviews() {
     useEffect(() => {
         const fetchSeatReviews = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/articles/reviews/?seat=${seatId}`);
+                const response = await axios.get(`/articles/reviews/?seat=${seatId}`);
                 setSeatReviews(response.data);
                 console.log('Seat reviews:', response.data);
             } catch (error) {
@@ -41,7 +42,7 @@ function SeatReviews() {
             const token = localStorage.getItem('token');
             if (token) {
                 try {
-                    const response = await axios.get('http://localhost:8000/accounts/current/', {
+                    const response = await axios.get('/accounts/current/', {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }
@@ -88,7 +89,7 @@ function ReviewWithComments({ review, renderStars, currentUser }) {
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/articles/reviews/${review.id}/comments/`);
+                const response = await axios.get(`/articles/reviews/${review.id}/comments/`);
                 setComments(response.data);
                 console.log('Comments:', response.data);
             } catch (error) {
@@ -104,7 +105,7 @@ function ReviewWithComments({ review, renderStars, currentUser }) {
         e.preventDefault();
         try {
             const response = await axios.post(
-                `http://localhost:8000/articles/reviews/${review.id}/comments/`,
+                `/articles/reviews/${review.id}/comments/`,
                 { content: commentContent, review: review.id },
                 {
                     headers: {
@@ -122,7 +123,7 @@ function ReviewWithComments({ review, renderStars, currentUser }) {
 
     const handleReviewDelete = async () => {
         try {
-            await axios.delete(`http://localhost:8000/articles/reviews/${review.id}/`, {
+            await axios.delete(`/articles/reviews/${review.id}/`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
@@ -136,7 +137,7 @@ function ReviewWithComments({ review, renderStars, currentUser }) {
     const handleReviewEdit = async () => {
         try {
             await axios.patch(
-                `http://localhost:8000/articles/reviews/${review.id}/`,
+                `/articles/reviews/${review.id}/`,
                 { content: editedReviewContent, score: editedReviewScore },
                 {
                     headers: {
@@ -161,7 +162,7 @@ function ReviewWithComments({ review, renderStars, currentUser }) {
 
     const handleLikeReview = async () => {
         try {
-            await axios.post(`http://localhost:8000/articles/reviews/${review.id}/like/`, {}, {
+            await axios.post(`/articles/reviews/${review.id}/like/`, {}, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
@@ -181,7 +182,7 @@ function ReviewWithComments({ review, renderStars, currentUser }) {
     const handleCommentEdit = async (commentId, content) => {
         try {
             await axios.patch(
-                `http://localhost:8000/articles/reviews/${review.id}/comments/${commentId}/`,
+                `/articles/reviews/${review.id}/comments/${commentId}/`,
                 { content },
                 {
                     headers: {
@@ -200,7 +201,7 @@ function ReviewWithComments({ review, renderStars, currentUser }) {
 
     const handleCommentDelete = async (commentId) => {
         try {
-            await axios.delete(`http://localhost:8000/articles/reviews/${review.id}/comments/${commentId}/`, {
+            await axios.delete(`/articles/reviews/${review.id}/comments/${commentId}/`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
@@ -213,7 +214,7 @@ function ReviewWithComments({ review, renderStars, currentUser }) {
 
     const handleCommentLike = async (commentId) => {
         try {
-            await axios.post(`http://localhost:8000/articles/reviews/${review.id}/comments/${commentId}/like/`, {}, {
+            await axios.post(`/articles/reviews/${review.id}/comments/${commentId}/like/`, {}, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }

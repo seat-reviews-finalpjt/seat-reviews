@@ -11,6 +11,7 @@ import SeatReviews from './SeatReviews';
 import './App.css';
 import { NotificationProvider } from './NotificationContext';
 import NotificationContainer from './NotificationContainer';
+import axios from './api';
 
 function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -51,7 +52,7 @@ function App() {
     };
 
     const handleLogout = () => {
-        window.location.href = 'http://localhost:3000/logout';
+        window.location.href = '/logout';
     };
 
     return (

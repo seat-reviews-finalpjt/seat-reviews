@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import './Home.css';
+import axios from './api';
 
 function Home({ isLoggedIn }) {
     const [query, setQuery] = useState('');
@@ -26,7 +27,7 @@ function Home({ isLoggedIn }) {
         const token = localStorage.getItem('token');
 
         try {
-            const response = await axios.get('http://localhost:8000/searches/', {
+            const response = await axios.get('/searches/', {
                 params: { q: query },
                 headers: { Authorization: `Bearer ${token}` }
             });

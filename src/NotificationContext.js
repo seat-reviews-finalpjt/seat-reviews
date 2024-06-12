@@ -1,6 +1,6 @@
-// 알림 상태를 관리하는 컨텍스트 파일
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { jwtDecode } from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
+import axios from './api';
 
 const NotificationContext = createContext();
 
@@ -15,7 +15,7 @@ export const NotificationProvider = ({ children }) => {
 
     useEffect(() => {
         if (userId) {
-            const ws = new WebSocket(`ws://localhost:8000/ws/notifications/${userId}/`);
+            const ws = new WebSocket(`ws://54.252.140.4:8000/ws/notifications/${userId}/`);
 
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);

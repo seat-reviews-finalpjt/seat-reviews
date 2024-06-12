@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import axios from './api';
 
 function Logout({ setIsLoggedIn, setUsername, setNickname }) {
     const navigate = useNavigate();
@@ -11,15 +12,15 @@ function Logout({ setIsLoggedIn, setUsername, setNickname }) {
             try {
                 const authProvider = localStorage.getItem('auth_provider');
                 if (authProvider === 'kakao') {
-                    window.location.href = 'http://localhost:8000/accounts/kakaoLogout/';
+                    window.location.href = '/accounts/kakaoLogout/';
                 } else {
                     const accessToken = localStorage.getItem('token');
                     const refreshToken = localStorage.getItem('refresh_token');
                     if (!accessToken || !refreshToken) {
                         throw new Error('No token found');
                     }
-                    
-                    await axios.post('http://localhost:8000/accounts/logout/', {
+
+                    await axios.post('http://54.252.140.4:8000/accounts/logout/', {
                         refresh: refreshToken
                     }, {
                         headers: {
@@ -54,7 +55,7 @@ function Logout({ setIsLoggedIn, setUsername, setNickname }) {
             const cookie = cookies[i];
             const eqPos = cookie.indexOf("=");
             const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=localhost;SameSite=None;Secure";
+            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=54.252.140.4;SameSite=None;Secure";
         }
     };
 

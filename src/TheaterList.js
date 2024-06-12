@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import './TheaterList.css';
+import axios from './api';
 
 function TheaterList() {
     const [theaters, setTheaters] = useState([]);
@@ -12,7 +13,7 @@ function TheaterList() {
         const fetchTheaters = async () => {
             const token = localStorage.getItem('token');
             try {
-                const response = await axios.get('http://localhost:8000/articles/theaters/', {
+                const response = await axios.get('/articles/theaters/', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setTheaters(response.data);

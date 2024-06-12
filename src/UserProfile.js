@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import './UserProfile.css';
+import axios from './api';
 
 function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider }) {
     const { username } = useParams();
@@ -23,7 +24,7 @@ function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider 
                     return;
                 }
 
-                const response = await axios.get(`http://localhost:8000/accounts/${username}/`, {
+                const response = await axios.get(`/accounts/${username}/`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -72,7 +73,7 @@ function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider 
                 return;
             }
 
-            await axios.delete(`http://localhost:8000/accounts/${username}/`, {
+            await axios.delete(`/accounts/${username}/`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -132,7 +133,7 @@ function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider 
                 formData.append('profile_image', profileData.profile_image);
             }
 
-            const response = await axios.put(`http://localhost:8000/accounts/${username}/`, formData, {
+            const response = await axios.put(`/accounts/${username}/`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
@@ -201,12 +202,12 @@ function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider 
                             ) : user.profile_image ? (
                                 <>
                                     <p>프로필 이미지</p>
-                                    <img src={`http://localhost:8000${user.profile_image}`} alt="Profile" />
+                                    <img src={`http://54.252.140.4:8000${user.profile_image}`} alt="Profile" />
                                 </>
                             ) : (
                                 <>
                                     <p>프로필 이미지</p>
-                                    <img src="http://localhost:8000/media/default_profile_image.png" alt="Profile" />
+                                    <img src="/media/default_profile_image.png" alt="Profile" />
                                 </>
                             )}
                             <div className="button-group">

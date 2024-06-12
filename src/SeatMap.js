@@ -4,6 +4,7 @@ import axios from 'axios';
 import Modal from 'react-modal';
 import Seat from './Seat';
 import './SeatMap.css';
+import axios from './api';
 
 Modal.setAppElement('#root');
 
@@ -37,7 +38,7 @@ function SeatMap() {
     useEffect(() => {
         const fetchTheater = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/articles/theaters/${theaterId}/`);
+                const response = await axios.get(`/articles/theaters/${theaterId}/`);
                 setTheater(response.data);
             } catch (error) {
                 console.error('Failed to fetch theater', error);
@@ -93,7 +94,7 @@ function SeatMap() {
         const csrfToken = getCookie('csrftoken');
 
         try {
-            await axios.post(`http://localhost:8000/articles/reviews/`, formData, {
+            await axios.post(`/articles/reviews/`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${token}`,
