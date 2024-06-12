@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { jwtDecode } from 'jwt-decode';
-import axios from './api';
+import jwtDecode from 'jwt-decode';
 
 const NotificationContext = createContext();
 
@@ -15,7 +14,7 @@ export const NotificationProvider = ({ children }) => {
 
     useEffect(() => {
         if (userId) {
-            const ws = new WebSocket(`ws://54.252.140.4:8000/ws/notifications/${userId}/`);
+            const ws = new WebSocket(`wss://54.252.140.4:8000/ws/notifications/${userId}/`);
 
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
