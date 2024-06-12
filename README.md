@@ -1,6 +1,7 @@
 # 📺Seat_review
 
 영화관 좌석 리뷰 시스템
+
 <img width="482" alt="image" src="https://github.com/seat-reviews-finalpjt/seat-reviews/assets/160835276/edb03898-1b63-40c6-88ad-2e32d1e4943c">
 
 - 시연영상 Youtube url:
