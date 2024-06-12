@@ -15,10 +15,11 @@
 
 ## 👥멤버 구성
 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/f8fd8936-f4fb-492e-b0c5-6097ea2bad35/c76e01fd-b088-4b1d-8cb6-241aeaee6134/Untitled.png)
+<img width="576" alt="image" src="https://github.com/seat-reviews-finalpjt/seat-reviews/assets/160835276/90252bf9-668e-4843-b530-11b19869149b">
 
 ## 🖥️개발 환경
 
-![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/f8fd8936-f4fb-492e-b0c5-6097ea2bad35/55eb886a-5281-4cc2-a637-9a29632c6746/Untitled.png)
+<img width="584" alt="image" src="https://github.com/seat-reviews-finalpjt/seat-reviews/assets/160835276/378d0dd6-78cf-48d0-9ef5-85c70501cd71">
+
 
 # ✅주요 기능
