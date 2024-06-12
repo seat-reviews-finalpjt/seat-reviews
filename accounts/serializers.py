@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from .models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,5 +13,14 @@ class UserSerializer(serializers.ModelSerializer):
         }  # 비밀번호 필드를 읽기 전용으로 설정
 
     def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)  # 비밀번호 해싱 자동 처리
+        user = User(
+            username=validated_data['username'],
+            nickname=validated_data['nickname'],
+            name=validated_data['name'],
+            gender=validated_data['gender'],
+            birthday=validated_data['birthday'],
+            profile_image=validated_data.get('profile_image')
+        )
+        user.set_password(validated_data['password'])
+        user.save()
         return user

@@ -9,6 +9,10 @@ generate_seats.py
 combine_seat.py
 theater_cheongho_seats.json
 theater_coex_seats.json
+out.json
+outseat.json
+
+config.py
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,django,database
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,django,database
