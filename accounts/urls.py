@@ -13,5 +13,5 @@ urlpatterns = [
     path('kakaoLoginLogicRedirect/', views.kakao_login_redirect),
     path('kakaoLogout/', views.kakao_logout),
     path("<str:username>/", views.UserProfileView.as_view(), name="user_profile"),
-    path("current/", views.CurrentUserView.as_view(), name="current_user"),  # 현재 사용자 정보를 반환하는 엔드포인트
+    # path("current/", views.CurrentUserView.as_view(), name="current_user"),  # 현재 사용자 정보를 반환하는 엔드포인트
 ]
