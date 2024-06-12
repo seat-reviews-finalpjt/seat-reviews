@@ -27,7 +27,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
-  "homepage": "https://seat-reviews-finalpjt.github.io/seat-reviews/",
+  "homepage": "https://seat-reviews-finalpjt.github.io/",
   "eslintConfig": {
     "extends": [
       "react-app",
