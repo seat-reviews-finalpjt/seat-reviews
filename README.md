@@ -23,7 +23,7 @@
 
 
 # ✅주요 기능
-**article** 
+**article** 📎[Wiki](https://github.com/seat-reviews-finalpjt/seat-reviews.wiki.git)
 - 리뷰 CRUD
 - 댓글 CRUD
 
