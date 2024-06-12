@@ -27,7 +27,8 @@
 - 리뷰 CRUD
 - 댓글 CRUD
 
-**account**  
+**account** 📎[Wiki](https://github.com/seat-reviews-finalpjt/seat-reviews/wiki)
+
 - 로그인
 - 회원가입
 - 회원 프로필
