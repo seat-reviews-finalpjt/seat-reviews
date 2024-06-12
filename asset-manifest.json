@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/seat-reviews/static/css/main.8fa9a412.css",
-    "main.js": "/seat-reviews/static/js/main.7a09ca6b.js",
+    "main.js": "/seat-reviews/static/js/main.d3798bc9.js",
     "static/js/453.18f76064.chunk.js": "/seat-reviews/static/js/453.18f76064.chunk.js",
     "index.html": "/seat-reviews/index.html",
     "main.8fa9a412.css.map": "/seat-reviews/static/css/main.8fa9a412.css.map",
-    "main.7a09ca6b.js.map": "/seat-reviews/static/js/main.7a09ca6b.js.map",
+    "main.d3798bc9.js.map": "/seat-reviews/static/js/main.d3798bc9.js.map",
     "453.18f76064.chunk.js.map": "/seat-reviews/static/js/453.18f76064.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.8fa9a412.css",
-    "static/js/main.7a09ca6b.js"
+    "static/js/main.d3798bc9.js"
   ]
 }
