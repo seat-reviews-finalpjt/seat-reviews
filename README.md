@@ -23,11 +23,11 @@
 
 
 # ✅주요 기능
-**article**📎[Wiki](https://github.com/seat-reviews-finalpjt/seat-reviews/wiki/Article)
+**article**📎[Article Wiki](https://github.com/seat-reviews-finalpjt/seat-reviews/wiki/Article)
 - 리뷰 CRUD
 - 댓글 CRUD
 
-**account** 📎[Wiki](https://github.com/seat-reviews-finalpjt/seat-reviews/wiki/Account#account)
+**account** 📎[Account Wiki](https://github.com/seat-reviews-finalpjt/seat-reviews/wiki/Account)
 
 - 로그인
 - 회원가입
@@ -38,6 +38,6 @@
 - 작성한 리뷰에 대한 댓글 알람 기능
 - 좋아요에 대한 알람 기능
 
-**search**
+**search** 📎[Search Wiki](https://github.com/seat-reviews-finalpjt/seat-reviews/wiki/Search)
 - 극장 검색
   
