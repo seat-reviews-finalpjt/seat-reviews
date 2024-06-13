@@ -1,0 +1,21 @@
+.seat {
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.seat:hover {
+    transform: scale(1.1);
+}
+
+.seat-label {
+    font-size: 12px;
+    font-weight: bold;
+    color: #fff;
+}
