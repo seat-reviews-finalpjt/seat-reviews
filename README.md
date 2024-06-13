@@ -4,8 +4,8 @@
 
 <img width="482" alt="image" src="https://github.com/seat-reviews-finalpjt/seat-reviews/assets/160835276/edb03898-1b63-40c6-88ad-2e32d1e4943c">
 
-- 시연영상 Youtube url:
-- 참고 PDF:
+- 시연영상 Youtube url: https://www.youtube.com/watch?v=-uyMYsIW2FM
+- 참고 PDF: https://drive.google.com/file/d/1rgbRKRcXTJ78o2v76k6QIa2pr_GS7bem/view?usp=sharing
 
 # 📝프로젝트 소개
 
