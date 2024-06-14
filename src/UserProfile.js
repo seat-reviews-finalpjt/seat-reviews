@@ -196,17 +196,17 @@ function UserProfile({ setIsLoggedIn, setUsername, setNickname, setAuthProvider 
                             {isKakaoUser ? (
                                 <>
                                     <p>프로필 이미지</p>
-                                    <img src="/images/kakao_logo.png" alt="Kakao Profile" className="kakao-logo" />
+                                    <img src="https://54.252.140.4/media/kakao_logo.png" alt="Kakao Profile" className="kakao-logo" />
                                 </>
                             ) : user.profile_image ? (
                                 <>
                                     <p>프로필 이미지</p>
-                                    <img src={`http://54.252.140.4:8000${user.profile_image}`} alt="Profile" />
+                                    <img src={`https://54.252.140.4${user.profile_image}`} alt="Profile" />
                                 </>
                             ) : (
                                 <>
                                     <p>프로필 이미지</p>
-                                    <img src="/media/default_profile_image.png" alt="Profile" />
+                                    <img src="https://54.252.140.4/media/default_profile_image.png" alt="Profile" />
                                 </>
                             )}
                             <div className="button-group">

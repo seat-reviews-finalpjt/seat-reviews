@@ -74,7 +74,7 @@ function Login({ setIsLoggedIn, setUsername, setNickname }) {
                 {error && <p className="error">{error}</p>}
                 <button type="submit" className="login-btn">로그인</button>
                 <button type="button" className="kakao-btn" onClick={handleKakaoLogin}>
-                    <img src="/images/kakao_logo.png" alt="kakao logo" className="kakao-logo" />
+                    <img src="https://54.252.140.4/media/kakao_logo.png" alt="kakao logo" className="kakao-logo" />
                     카카오로 시작하기
                 </button>
             </form>

@@ -19,7 +19,7 @@ function Logout({ setIsLoggedIn, setUsername, setNickname }) {
                         throw new Error('No token found');
                     }
 
-                    await axios.post('http://54.252.140.4:8000/accounts/logout/', {
+                    await axios.post('/accounts/logout/', {
                         refresh: refreshToken
                     }, {
                         headers: {
@@ -47,6 +47,8 @@ function Logout({ setIsLoggedIn, setUsername, setNickname }) {
 
         logout();
     }, [navigate, setIsLoggedIn, setUsername, setNickname]);
+
+
 
     const deleteAllCookies = () => {
         const cookies = document.cookie.split(";");

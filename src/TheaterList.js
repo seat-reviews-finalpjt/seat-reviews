@@ -16,6 +16,8 @@ function TheaterList() {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setTheaters(response.data);
+                console.log(localStorage.getItem('token'));
+
             } catch (error) {
                 if (error.response && error.response.status === 401) {
                     navigate('/login');

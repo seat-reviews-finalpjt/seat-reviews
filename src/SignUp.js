@@ -11,7 +11,6 @@ function SignUp() {
     const [gender, setGender] = useState('');
     const [birthday, setBirthday] = useState('');
     const [profileImage, setProfileImage] = useState(null);
-    const [message, setMessage] = useState('');
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
@@ -26,7 +25,7 @@ function SignUp() {
         if (profileImage) {
             formData.append('profile_image', profileImage);
         }
-    
+
         try {
             const response = await axios.post('/accounts/signup/', formData, {
                 headers: {
@@ -39,7 +38,7 @@ function SignUp() {
             }, 2000); // 2초 후에 로그인 페이지로 이동
         } catch (error) {
             console.error('회원가입 실패', error.response.data);
-            setMessage('회원가입 실패. 입력한 정보를 확인해주세요.');
+            window.alert('회원가입 실패. 입력한 정보를 확인해주세요.');
         }
     };
 
@@ -51,16 +50,9 @@ function SignUp() {
         window.location.href = '/accounts/kakaoLoginLogic';
     };
 
-    const messageStyle = {
-        color: message.includes('실패') ? 'red' : 'green',
-        fontWeight: 'bold',
-        margin: '10px 0',
-    };
-
     return (
         <div className="signup-container">
             <h2>회원 가입</h2>
-            {message && <p style={messageStyle}>{message}</p>}
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>아이디</label>
@@ -120,7 +112,7 @@ function SignUp() {
                 </div>
                 <button type="submit" className="signup-btn">회원 가입</button>
                 <button className="kakao-signup-btn" onClick={handleKakaoSignup}>
-                <img src="/images/kakao_logo.png" alt="Kakao Logo" width="20" height="20" />
+                <img src="https://54.252.140.4/media/kakao_logo.png" alt="Kakao Logo" width="20" height="20" />
                 카카오로 회원가입
             </button>
             </form>
